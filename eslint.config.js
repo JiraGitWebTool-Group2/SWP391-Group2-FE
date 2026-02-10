@@ -19,5 +19,9 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      "no-unused-vars": "warn",
+      "any-unused-vars": 'warn'
+    }
   },
 ])
