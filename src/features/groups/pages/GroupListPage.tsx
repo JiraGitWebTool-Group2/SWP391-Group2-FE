@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+<<<<<<< HEAD
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -104,6 +105,34 @@ export default function GroupListPage() {
             </div>
           </CardContent>
         </Card>
+=======
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+export function GroupListPage() {
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Project Groups</h1>
+      <div className="grid grid-cols-3 gap-4">
+        {[1, 2, 3].map((g) => (
+          <Card key={g}>
+            <CardHeader>
+              <CardTitle>Group {g}</CardTitle>
+              <CardDescription>SWP391 Project</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full">
+                View Detail
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+>>>>>>> 1fc664d30616665204ed1c5a8a56ce4ce8b22e27
       </div>
     </div>
   );

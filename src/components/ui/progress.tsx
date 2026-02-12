@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 "use client"
 
+=======
+>>>>>>> 1fc664d30616665204ed1c5a8a56ce4ce8b22e27
 import * as React from "react"
 import { Progress as ProgressPrimitive } from "radix-ui"
 
