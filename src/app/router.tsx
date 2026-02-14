@@ -1,32 +1,98 @@
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "../features/auth/pages/LoginPage";
-<<<<<<< HEAD
-import GroupListPage from "../features/groups/pages/GroupListPage";
-import GroupDetailPage from "../features/groups/pages/GroupDetailPage";
-=======
-import { GroupDetailPage } from "@/features/groups/pages/GroupDetailPage";
-import { GroupListPage } from "@/features/groups/pages/GroupListPage";
+import App from "./App";
+
+/* ===== Dashboard ===== */
+import { DashboardPage } from "@/features/statistics/pages/DashboardPage";
+
+/* ===== Groups ===== */
+import GroupListPage from "@/features/groups/pages/GroupListPage";
+import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
+
+/* ===== User ===== */
+import { UserProfilePage } from "@/features/user/pages/UserProfilePage";
+
+/* ===== Task Board ===== */
+import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
 import { SrsGeneratePage } from "@/features/requirements/pages/SrsGeneratePage";
 import { SrsPreview } from "@/features/requirements/srs/SrsPreview";
 import { TraceabilityTable } from "@/features/requirements/srs/TraceabilityTable";
-import { DashboardPage } from "@/features/statistics/pages/DashboardPage";
 import { ProgressReportPage } from "@/features/statistics/pages/ProgressReportPage";
-import SyncPage from "@/features/sync/pages/SyncPage";
-import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
-import { UserProfilePage } from "@/features/user/pages/UserProfilePage";
->>>>>>> 1fc664d30616665204ed1c5a8a56ce4ce8b22e27
+import SyncForm from "@/features/sync/components/SyncForm";
+
+/* ===== Sync ===== */
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserProfilePage />,
-  },
-  {
-    path: "/groups",
-    element: <GroupListPage />,
-  },
-  {
-    path: "/groups/:groupId",
-    element: <GroupDetailPage />,
+    element: <App />,
+    children: [
+      /* ================= DASHBOARD ================= */
+      {
+        index: true,
+        element: <DashboardPage />,
+      },
+      {
+        path: "dashboard",
+        element: <DashboardPage />,
+      },
+
+      /* ================= GROUPS ================= */
+      {
+        path: "groups",
+        children: [
+          {
+            index: true,
+            element: <GroupListPage />,
+          },
+          {
+            path: ":groupId",
+            element: <GroupDetailPage />,
+          },
+        ],
+      },
+
+      /* ================= TASK BOARD ================= */
+      {
+        path: "tasks",
+        element: <TaskBoardPage />,
+      },
+
+      /* ================= SRS ================= */
+      {
+        path: "srs",
+        children: [
+          {
+            path: "generate",
+            element: <SrsGeneratePage />,
+          },
+          {
+            path: "preview",
+            element: <SrsPreview />,
+          },
+          {
+            path: "traceability",
+            element: <TraceabilityTable />,
+          },
+        ],
+      },
+
+      /* ================= REPORT ================= */
+      {
+        path: "reports",
+        element: <ProgressReportPage />,
+      },
+
+      /* ================= SYNC ================= */
+      {
+        path: "sync",
+        element: <SyncForm />,
+      },
+
+      /* ================= USER ================= */
+      {
+        path: "profile",
+        element: <UserProfilePage />,
+      },
+    ],
   },
 ]);
