@@ -1,6 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 
+/* ===== Auth ===== */
+import LoginPage from "../features/auth/pages/LoginPage";
+
 /* ===== Dashboard ===== */
 import { DashboardPage } from "@/features/statistics/pages/DashboardPage";
 
@@ -13,15 +16,26 @@ import { UserProfilePage } from "@/features/user/pages/UserProfilePage";
 
 /* ===== Task Board ===== */
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
+
+/* ===== SRS ===== */
 import { SrsGeneratePage } from "@/features/requirements/pages/SrsGeneratePage";
 import { SrsPreview } from "@/features/requirements/srs/SrsPreview";
 import { TraceabilityTable } from "@/features/requirements/srs/TraceabilityTable";
+
+/* ===== Report ===== */
 import { ProgressReportPage } from "@/features/statistics/pages/ProgressReportPage";
-import SyncForm from "@/features/sync/components/SyncForm";
 
 /* ===== Sync ===== */
+import SyncForm from "@/features/sync/components/SyncForm";
 
 export const router = createBrowserRouter([
+  /* ================= LOGIN (no layout) ================= */
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+
+  /* ================= MAIN APP LAYOUT ================= */
   {
     path: "/",
     element: <App />,
