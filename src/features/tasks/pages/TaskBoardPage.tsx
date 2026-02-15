@@ -9,9 +9,6 @@ export function TaskBoardPage() {
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
           Task Board
         </h1>
-        <p className="text-slate-500 text-sm">
-          Visual overview of task workflow
-        </p>
       </div>
 
       {/* Board */}

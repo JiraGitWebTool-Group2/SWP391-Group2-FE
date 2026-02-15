@@ -19,9 +19,6 @@ export function ProgressReportPage() {
                 Generate Progress Report
               </CardTitle>
             </div>
-            <p className="text-sm text-slate-500">
-              Create structured sprint or member performance report
-            </p>
           </CardHeader>
 
           <CardContent className="space-y-6">

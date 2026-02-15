@@ -17,22 +17,15 @@ export default function GroupListPage() {
       {/* HEADER */}
       <div className="flex justify-between items-center">
         <div>
-          <h1
-            className="text-4xl font-bold tracking-tight 
-          bg-gradient-to-r from-rose-500 via-orange-500 to-violet-500 
-          bg-clip-text text-transparent"
-          >
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Groups Management
           </h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-2">
-            Monitor and manage student project groups efficiently
-          </p>
         </div>
 
         <Button
           size="lg"
           className="gap-2 text-white shadow-xl
-          bg-gradient-to-r from-orange-500 to-rose-500
+          bg-gradient-to-r from-blue-500 to-blue-600
           hover:scale-105 hover:shadow-2xl
           transition-all duration-300"
         >
