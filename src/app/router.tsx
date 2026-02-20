@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "./App";
 
 /* ===== Auth ===== */
@@ -29,7 +29,13 @@ import { ProgressReportPage } from "@/features/statistics/pages/ProgressReportPa
 import SyncForm from "@/features/sync/components/SyncForm";
 
 export const router = createBrowserRouter([
-  /* ================= LOGIN (no layout) ================= */
+  /* ================= DEFAULT REDIRECT ================= */
+  {
+    path: "/",
+    element: <Navigate to="/login" replace />,
+  },
+
+  /* ================= LOGIN (NO LAYOUT) ================= */
   {
     path: "/login",
     element: <LoginPage />,
@@ -37,20 +43,16 @@ export const router = createBrowserRouter([
 
   /* ================= MAIN APP LAYOUT ================= */
   {
-    path: "/",
+    path: "/app",
     element: <App />,
     children: [
-      /* ================= DASHBOARD ================= */
-      {
-        index: true,
-        element: <DashboardPage />,
-      },
+      /* ===== DASHBOARD ===== */
       {
         path: "dashboard",
         element: <DashboardPage />,
       },
 
-      /* ================= GROUPS ================= */
+      /* ===== GROUPS ===== */
       {
         path: "groups",
         children: [
@@ -65,44 +67,39 @@ export const router = createBrowserRouter([
         ],
       },
 
-      /* ================= TASK BOARD ================= */
+      /* ===== TASK BOARD ===== */
       {
         path: "tasks",
         element: <TaskBoardPage />,
       },
 
-      /* ================= SRS ================= */
+      /* ===== SRS ===== */
       {
-        path: "srs",
-        children: [
-          {
-            path: "generate",
-            element: <SrsGeneratePage />,
-          },
-          {
-            path: "preview",
-            element: <SrsPreview />,
-          },
-          {
-            path: "traceability",
-            element: <TraceabilityTable />,
-          },
-        ],
+        path: "srs/generate",
+        element: <SrsGeneratePage />,
+      },
+      {
+        path: "srs/preview",
+        element: <SrsPreview />,
+      },
+      {
+        path: "srs/traceability",
+        element: <TraceabilityTable />,
       },
 
-      /* ================= REPORT ================= */
+      /* ===== REPORT ===== */
       {
         path: "reports",
         element: <ProgressReportPage />,
       },
 
-      /* ================= SYNC ================= */
+      /* ===== SYNC ===== */
       {
         path: "sync",
         element: <SyncForm />,
       },
 
-      /* ================= USER ================= */
+      /* ===== USER ===== */
       {
         path: "profile",
         element: <UserProfilePage />,
