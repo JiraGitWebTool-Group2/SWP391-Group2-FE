@@ -1,109 +1,53 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import App from "./App";
+import AdminLayout from "@/components/layout/AdminLayout";
 
-/* ===== Auth ===== */
-import LoginPage from "../features/auth/pages/LoginPage";
-
-/* ===== Dashboard ===== */
-import { DashboardPage } from "@/features/statistics/pages/DashboardPage";
-
-/* ===== Groups ===== */
-import GroupListPage from "@/features/groups/pages/GroupListPage";
-import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
-
-/* ===== User ===== */
-import { UserProfilePage } from "@/features/user/pages/UserProfilePage";
-
-/* ===== Task Board ===== */
-import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
-
-/* ===== SRS ===== */
-import { SrsGeneratePage } from "@/features/requirements/pages/SrsGeneratePage";
-import { SrsPreview } from "@/features/requirements/srs/SrsPreview";
-import { TraceabilityTable } from "@/features/requirements/srs/TraceabilityTable";
-
-/* ===== Report ===== */
-import { ProgressReportPage } from "@/features/statistics/pages/ProgressReportPage";
-
-/* ===== Sync ===== */
-import SyncForm from "@/features/sync/components/SyncForm";
+/* Admin Pages */
+import AdminDashboardPage from "@/features/admin/pages/AdminDashboardPage";
+import GroupManagementPage from "@/features/admin/pages/GroupManagementPage";
+import LecturerManagementPage from "@/features/admin/pages/LecturerManagementPage";
+import AssignLecturerPage from "@/features/admin/pages/AssignLecturerPage";
+import IntegrationConfigPage from "@/features/admin/pages/IntegrationConfigPage";
 
 export const router = createBrowserRouter([
-  /* ================= DEFAULT REDIRECT ================= */
+  /* Redirect root -> admin */
   {
     path: "/",
-    element: <Navigate to="/login" replace />,
+    element: <Navigate to="/admin" replace />,
   },
 
-  /* ================= LOGIN (NO LAYOUT) ================= */
+  /* ================= ADMIN ================= */
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-
-  /* ================= MAIN APP LAYOUT ================= */
-  {
-    path: "/app",
-    element: <App />,
+    path: "/admin",
+    element: <AdminLayout />,
     children: [
-      /* ===== DASHBOARD ===== */
+      /* Default dashboard */
       {
-        path: "dashboard",
-        element: <DashboardPage />,
+        index: true,
+        element: <AdminDashboardPage />,
       },
 
-      /* ===== GROUPS ===== */
       {
         path: "groups",
-        children: [
-          {
-            index: true,
-            element: <GroupListPage />,
-          },
-          {
-            path: ":groupId",
-            element: <GroupDetailPage />,
-          },
-        ],
-      },
-
-      /* ===== TASK BOARD ===== */
-      {
-        path: "tasks",
-        element: <TaskBoardPage />,
-      },
-
-      /* ===== SRS ===== */
-      {
-        path: "srs/generate",
-        element: <SrsGeneratePage />,
+        element: <GroupManagementPage />,
       },
       {
-        path: "srs/preview",
-        element: <SrsPreview />,
+        path: "lecturers",
+        element: <LecturerManagementPage />,
       },
       {
-        path: "srs/traceability",
-        element: <TraceabilityTable />,
+        path: "assign",
+        element: <AssignLecturerPage />,
       },
-
-      /* ===== REPORT ===== */
       {
-        path: "reports",
-        element: <ProgressReportPage />,
-      },
-
-      /* ===== SYNC ===== */
-      {
-        path: "sync",
-        element: <SyncForm />,
-      },
-
-      /* ===== USER ===== */
-      {
-        path: "profile",
-        element: <UserProfilePage />,
+        path: "integration",
+        element: <IntegrationConfigPage />,
       },
     ],
+  },
+
+  /* 404 fallback */
+  {
+    path: "*",
+    element: <Navigate to="/admin" replace />,
   },
 ]);
