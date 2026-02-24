@@ -8,14 +8,20 @@ import {
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "../ui/mode-toggle";
 import { User, LayoutDashboard } from "lucide-react";
+import { useAuthStore } from "@/stores/auth.store"; // ✅ thêm dòng này
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { role } = useAuthStore(); // ✅ thêm dòng này
+
   const navItems = [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "Sync", path: "/sync" },
+
+    // ✅ Ẩn Sync nếu là member
+    ...(role !== "member" ? [{ name: "Sync", path: "/sync" }] : []),
+
     { name: "Groups", path: "/groups" },
     { name: "Tasks", path: "/tasks" },
     { name: "SRS", path: "/srs/generate" },
@@ -41,7 +47,6 @@ function Header() {
           SWP391 Tracker
         </Link>
 
-        {/* Navigation */}
         <div className="flex items-center gap-8">
           <NavigationMenu>
             {navItems.map((item) => {
@@ -91,10 +96,8 @@ function Header() {
             })}
           </NavigationMenu>
 
-          {/* Divider */}
           <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
 
-          {/* Right Section */}
           <div className="flex items-center gap-4">
             <Link
               to="/profile"

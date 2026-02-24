@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectTrigger,
@@ -14,7 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Link2, CheckCircle } from "lucide-react";
 
 const SyncForm = () => {
   return (
@@ -31,19 +32,40 @@ const SyncForm = () => {
           </CardHeader>
 
           <CardContent className="space-y-8">
-            {/* Project Group */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-600">
-                Project Group
-              </label>
-              <Select>
-                <SelectTrigger className="h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-blue-400 transition-all">
-                  <SelectValue placeholder="Select Project Group" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="sp26">SP26 Project</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Repository Links */}
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-600">
+                  GitHub Repository URL
+                </label>
+                <div className="flex gap-3">
+                  <Input
+                    placeholder="https://github.com/your-org/your-repo"
+                    className="h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-blue-400"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-600">
+                  Jira Project URL
+                </label>
+                <div className="flex gap-3">
+                  <Input
+                    placeholder="https://your-domain.atlassian.net"
+                    className="h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400"
+                  />
+                </div>
+              </div>
+
+              {/* Check Button */}
+              <Button
+                variant="outline"
+                className="w-full h-11 rounded-xl border-blue-500 text-blue-600 hover:bg-blue-50 flex items-center gap-2"
+              >
+                <CheckCircle size={18} />
+                Check Connection
+              </Button>
             </div>
 
             {/* Platform Selection */}
@@ -76,16 +98,68 @@ const SyncForm = () => {
 
               <CardContent className="grid grid-cols-2 gap-4">
                 <Select>
-                  <SelectTrigger className="h-11 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400 transition-all">
+                  <SelectTrigger className="h-11 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400">
                     <SelectValue placeholder="Issue Type" />
                   </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bug">Bug</SelectItem>
+                    <SelectItem value="task">Task</SelectItem>
+                  </SelectContent>
                 </Select>
 
                 <Select>
-                  <SelectTrigger className="h-11 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400 transition-all">
+                  <SelectTrigger className="h-11 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400">
                     <SelectValue placeholder="Sprint" />
                   </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sprint1">Sprint 1</SelectItem>
+                    <SelectItem value="sprint2">Sprint 2</SelectItem>
+                  </SelectContent>
                 </Select>
+              </CardContent>
+            </Card>
+            {/* GitHub Scope */}
+            <Card className="rounded-2xl border border-slate-200 shadow-sm bg-slate-50/50">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold text-slate-700">
+                  GitHub Scope
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                {/* Options */}
+                <div className="grid grid-cols-2 gap-4">
+                  {["Commits", "Pull Requests"].map((item) => (
+                    <label
+                      key={item}
+                      className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200 bg-white hover:bg-indigo-50 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                    >
+                      <Checkbox />
+                      <span className="text-sm font-medium text-slate-700">
+                        {item}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                {/* Date Range */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs text-slate-500">From</label>
+                    <Input
+                      type="date"
+                      className="h-11 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs text-slate-500">To</label>
+                    <Input
+                      type="date"
+                      className="h-11 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400"
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

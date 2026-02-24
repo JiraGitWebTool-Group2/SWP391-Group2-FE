@@ -1,53 +1,59 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import AdminLayout from "@/components/layout/AdminLayout";
+import RequireAdmin from "@/components/guards/RequireAdmin";
+import RequireAuth from "@/components/guards/RequireAuth";
 
-/* Admin Pages */
+import AdminLayout from "@/components/layout/AdminLayout";
 import AdminDashboardPage from "@/features/admin/pages/AdminDashboardPage";
 import GroupManagementPage from "@/features/admin/pages/GroupManagementPage";
 import LecturerManagementPage from "@/features/admin/pages/LecturerManagementPage";
 import AssignLecturerPage from "@/features/admin/pages/AssignLecturerPage";
 import IntegrationConfigPage from "@/features/admin/pages/IntegrationConfigPage";
 
+import LoginPage from "@/features/auth/pages/LoginPage";
+import { DashboardPage } from "@/features/statistics/pages/DashboardPage";
+
 export const router = createBrowserRouter([
-  /* Redirect root -> admin */
   {
     path: "/",
-    element: <Navigate to="/admin" replace />,
+    element: <Navigate to="/login" replace />,
   },
 
-  /* ================= ADMIN ================= */
   {
-    path: "/admin",
-    element: <AdminLayout />,
-    children: [
-      /* Default dashboard */
-      {
-        index: true,
-        element: <AdminDashboardPage />,
-      },
+    path: "/login",
+    element: <LoginPage />,
+  },
 
+  // 🔐 ADMIN ONLY
+  {
+    element: <RequireAdmin />,
+    children: [
       {
-        path: "groups",
-        element: <GroupManagementPage />,
-      },
-      {
-        path: "lecturers",
-        element: <LecturerManagementPage />,
-      },
-      {
-        path: "assign",
-        element: <AssignLecturerPage />,
-      },
-      {
-        path: "integration",
-        element: <IntegrationConfigPage />,
+        path: "/admin",
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminDashboardPage /> },
+          { path: "groups", element: <GroupManagementPage /> },
+          { path: "lecturers", element: <LecturerManagementPage /> },
+          { path: "assign", element: <AssignLecturerPage /> },
+          { path: "integration", element: <IntegrationConfigPage /> },
+        ],
       },
     ],
   },
 
-  /* 404 fallback */
+  // 🔐 USER (non-admin)
+  {
+    element: <RequireAuth />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <DashboardPage />,
+      },
+    ],
+  },
+
   {
     path: "*",
-    element: <Navigate to="/admin" replace />,
+    element: <Navigate to="/login" replace />,
   },
 ]);
