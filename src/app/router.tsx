@@ -1,5 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import RequireAdmin from "@/components/guards/RequireAdmin";
+import RequireUser from "@/components/guards/RequireUser";
+// import RequireSyncPermission from "@/components/guards/RequireSyncPermission";
 
 import AdminLayout from "@/components/layout/AdminLayout";
 import MainLayout from "@/components/layout/MainLayout";
@@ -18,13 +20,12 @@ import { ProgressReportPage } from "@/features/statistics/pages/ProgressReportPa
 import { SrsGeneratePage } from "@/features/requirements/pages/SrsGeneratePage";
 import SyncPage from "@/features/sync/pages/SyncPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
-import RequireUser from "@/components/guards/RequireUser";
-import RequireSyncPermission from "@/components/guards/RequireSyncPermission";
 
 export const router = createBrowserRouter([
+  // ================= LOGIN =================
   {
     path: "/",
-    element: <Navigate to="/login" replace />,
+    element: <LoginPage />,
   },
 
   {
@@ -50,7 +51,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // ================= USER (NON ADMIN) =================
+  // ================= USER =================
   {
     element: <RequireUser />,
     children: [
@@ -65,15 +66,16 @@ export const router = createBrowserRouter([
           { path: "/srs/generate", element: <SrsGeneratePage /> },
         ],
       },
-
-      // Sync chỉ cho Lecturer + Team Leader
-      {
-        element: <RequireSyncPermission />,
-        children: [{ path: "/sync", element: <SyncPage /> }],
-      },
     ],
   },
 
+  // ================= SYNC =================
+  // {
+  //   element: <RequireSyncPermission />,
+  //   children: [{ path: "/sync", element: <SyncPage /> }],
+  // },
+
+  // ================= FALLBACK =================
   {
     path: "*",
     element: <Navigate to="/login" replace />,

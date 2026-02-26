@@ -1,24 +1,11 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/stores/auth.store";
+import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "../hooks/useLogin";
+import { AlertCircle } from "lucide-react";
 
 const LoginForm = () => {
-  const [role, setRole] = useState("");
-  const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login); // ✅ lấy hàm login
-
-  const handleLogin = () => {
-    // mock token
-    login("mock-access-token", role);
-
-    if (role === "admin") {
-      navigate("/admin");
-    } else {
-      navigate("/dashboard");
-    }
-  };
+  const { handleGoogleSuccess, handleGoogleError, isLoading, error } =
+    useGoogleLogin();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 p-6">
@@ -28,38 +15,37 @@ const LoginForm = () => {
             SWP391 Project Portal
           </CardTitle>
           <p className="text-base text-muted-foreground">
-            Sign in with your Google account
+            Đăng nhập với tài khoản Google
           </p>
         </CardHeader>
 
-        <CardContent className="space-y-8 pb-12 px-10">
-          <div className="space-y-3">
-            <label className="text-base font-medium">Select Role</label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full h-14 rounded-xl border border-gray-300 px-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            >
-              <option value="">Choose your role</option>
-              <option value="admin">Admin</option>
-              <option value="lecturer">Lecturer</option>
-              <option value="leader">Team Leader</option>
-              <option value="member">Team Member</option>
-            </select>
+        <CardContent className="space-y-6 pb-12 px-10">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-start gap-2">
+              <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+              <span className="text-sm">{error}</span>
+            </div>
+          )}
+
+          <div className="flex flex-col items-center gap-3">
+            {isLoading ? (
+              <div className="flex items-center gap-2 text-gray-600">
+                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <span>Đang xử lý...</span>
+              </div>
+            ) : (
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                useOneTap
+              />
+            )}
           </div>
 
-          <Button
-            onClick={handleLogin} // ✅ thêm onClick
-            disabled={!role}
-            className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white text-base rounded-xl flex items-center justify-center gap-3 transition shadow-md hover:shadow-lg disabled:opacity-50"
-          >
-            <img
-              src="https://www.svgrepo.com/show/475656/google-color.svg"
-              alt="Google"
-              className="h-6 w-6"
-            />
-            Continue with Google
-          </Button>
+          <div className="text-xs text-gray-500 text-center mt-4">
+            <p>Chỉ sử dụng email được cấp phép</p>
+            <p className="mt-1">Liên hệ admin nếu gặp vấn đề</p>
+          </div>
         </CardContent>
       </Card>
     </div>

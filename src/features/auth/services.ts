@@ -1,30 +1,41 @@
-// import axios from "axios";
-// import type {
-//   LoginRequest,
-//   TokenResponse,
-//   GoogleLoginRequest,
-//   MeResponse,
-// } from "./types";
+import { api } from "@/lib/axios";
 
-// export const api = axios.create({
-//   baseURL: "https://localhost:5163/api",
-// });
+export interface GoogleLoginRequest {
+  idToken: string;
+}
 
-// // LOGIN
-// export const loginApi = (data: LoginRequest) =>
-//   api.post<TokenResponse>("/auth/login", data);
+export interface GoogleLoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  role: string;
+  email?: string;
+  name?: string;
+}
 
-// // GOOGLE
-// export const googleLoginApi = (data: GoogleLoginRequest) =>
-//   api.post<TokenResponse>("/auth/google", data);
+export const authService = {
+  /**
+   * Đăng nhập với Google
+   * POST /api/auth/google
+   */
+  googleLogin: (data: GoogleLoginRequest) =>
+    api.post<GoogleLoginResponse>("/auth/google", data),
 
-// // REFRESH
-// export const refreshApi = (refreshToken: string) =>
-//   api.post<TokenResponse>("/auth/refresh", { refreshToken });
+  /**
+   * Refresh token
+   * POST /api/auth/refresh
+   */
+  refreshToken: (refreshToken: string) =>
+    api.post("/auth/refresh", { refreshToken }),
 
-// // LOGOUT
-// export const logoutApi = (refreshToken: string) =>
-//   api.post("/auth/logout", { refreshToken });
+  /**
+   * Đăng xuất
+   * POST /api/auth/logout
+   */
+  logout: (refreshToken: string) => api.post("/auth/logout", { refreshToken }),
 
-// // ME
-// export const getMeApi = () => api.get<MeResponse>("/auth/me");
+  /**
+   * Lấy thông tin user hiện tại
+   * GET /api/auth/me
+   */
+  getMe: () => api.get("/auth/me"),
+};

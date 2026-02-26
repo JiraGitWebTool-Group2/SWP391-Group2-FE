@@ -1,15 +1,14 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
 
-export default function RequireAuth() {
-  const accessToken = useAuthStore((state: any) => state.accessToken);
-  const location = useLocation();
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
+  const token = useAuthStore((state) => state.accessToken);
 
-  // ❌ Chưa login
-  if (!accessToken) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!token) {
+    return <Navigate to="/" />;
   }
 
-  // ✅ Đã login
-  return <Outlet />;
-}
+  return <>{children}</>;
+};
+
+export default RequireAuth;

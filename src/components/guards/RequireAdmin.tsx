@@ -1,19 +1,18 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
 
-export default function RequireAdmin() {
-  const { accessToken, role } = useAuthStore((state) => ({
-    accessToken: state.accessToken,
-    role: state.role,
-  }));
+const RequireAdmin = () => {
+  const { accessToken } = useAuthStore();
 
   if (!accessToken) {
     return <Navigate to="/login" replace />;
   }
 
-  if (role?.toUpperCase() !== "ADMIN") {
-    return <Navigate to="/dashboard" replace />;
-  }
+  // if (role?.toUpperCase() !== "ADMIN") {
+  //   return <Navigate to="/dashboard" replace />;
+  // }
 
   return <Outlet />;
-}
+};
+
+export default RequireAdmin;
