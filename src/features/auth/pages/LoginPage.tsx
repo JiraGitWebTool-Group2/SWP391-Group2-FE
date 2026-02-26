@@ -1,12 +1,7 @@
-// features/auth/pages/LoginPage.tsx
-import LoginForm from "../components/LoginForm";
+import LoginForm from "@/features/auth/components/LoginForm";
 
 const LoginPage = () => {
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <LoginForm />
-    </div>
-  );
+  return <LoginForm />;
 };
 
 export default LoginPage;
