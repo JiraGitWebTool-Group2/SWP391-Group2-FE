@@ -24,13 +24,7 @@ export default function AdminHeader() {
           Integration
         </Link>
 
-        {/* 🔥 Thêm Import */}
-        <Link to="/admin/import-users" className="hover:text-blue-500">
-          Import Users
-        </Link>
-
-        {/* 🔥 Thêm Export */}
-        <Link to="/admin/add-user" className="hover:text-blue-500">
+        <Link to="/admin/users" className="hover:text-blue-500">
           Add Users
         </Link>
       </nav>

@@ -20,39 +20,31 @@ import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
 import { ProgressReportPage } from "@/features/report/pages/ProgressReportPage";
 import SyncPage from "@/features/sync/pages/SyncPage";
+import UserManagementPage from "@/features/admin/pages/UserManagementPage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
   {
     path: "/",
-    element: <Navigate to="/login" replace />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
+    element: <Navigate to="/admin" replace />,
   },
 
   // ================= ADMIN =================
   {
     path: "/admin",
-    element: <RequireAdmin />,
+    element: <AdminLayout />, // 🔥 BẮT BUỘC PHẢI CÓ
     children: [
-      {
-        element: <AdminLayout />,
-        children: [
-          { index: true, element: <AdminDashboardPage /> },
-          { path: "groups", element: <GroupManagementPage /> },
-          { path: "lecturers", element: <LecturerManagementPage /> },
-          { path: "assign", element: <AssignLecturerPage /> },
-          { path: "integration", element: <IntegrationConfigPage /> },
-        ],
-      },
+      { index: true, element: <AdminDashboardPage /> },
+      { path: "groups", element: <GroupManagementPage /> },
+      { path: "lecturers", element: <LecturerManagementPage /> },
+      { path: "assign", element: <AssignLecturerPage /> },
+      { path: "integration", element: <IntegrationConfigPage /> },
+      { path: "users", element: <UserManagementPage /> },
     ],
   },
 
   // ================= USER =================
   {
-    element: <RequireUser />,
     children: [
       {
         element: <MainLayout />,
