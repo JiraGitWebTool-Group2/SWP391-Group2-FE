@@ -11,6 +11,7 @@ import GroupManagementPage from "@/features/admin/pages/GroupManagementPage";
 import LecturerManagementPage from "@/features/admin/pages/LecturerManagementPage";
 import AssignLecturerPage from "@/features/admin/pages/AssignLecturerPage";
 import IntegrationConfigPage from "@/features/admin/pages/IntegrationConfigPage";
+import UserManagementPage from "@/features/admin/pages/UserManagementPage";
 
 import LoginPage from "@/features/auth/pages/LoginPage";
 
@@ -18,21 +19,33 @@ import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import GroupListPage from "@/features/groups/pages/GroupListPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
-import { ProgressReportPage } from "@/features/report/pages/ProgressReportPage";
+import ReportManagementPage from "@/features/report/pages/ReportManagementPage";
+import ReportEditorPage from "@/features/report/pages/ReportEditorPage";
+import ReportReviewPage from "@/features/report/pages/ReportReviewPage";
 import SyncPage from "@/features/sync/pages/SyncPage";
-import UserManagementPage from "@/features/admin/pages/UserManagementPage";
+import ProgressReportPage from "@/features/report/pages/ProgressReportPage";
+import { SrsGeneratePage } from "@/features/srs/pages/SrsGeneratePage";
+import SrsManagementPage from "@/features/srs/pages/SrsManagementPage";
+import SrsEditorPage from "@/features/srs/pages/SrsEditorPage";
+import SrsReviewPage from "@/features/srs/pages/SrsReviewPage";
 
 export const router = createBrowserRouter([
-  // ================= LOGIN =================
+  // ================= ROOT REDIRECT =================
   {
     path: "/",
-    element: <Navigate to="/admin" replace />,
+    element: <Navigate to="/dashboard" replace />,
+  },
+
+  // ================= LOGIN =================
+  {
+    path: "/login",
+    element: <LoginPage />,
   },
 
   // ================= ADMIN =================
   {
     path: "/admin",
-    element: <AdminLayout />, // 🔥 BẮT BUỘC PHẢI CÓ
+    element: <AdminLayout />,
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: "groups", element: <GroupManagementPage /> },
@@ -45,24 +58,41 @@ export const router = createBrowserRouter([
 
   // ================= USER =================
   {
+    path: "/",
+    element: <MainLayout />,
     children: [
+      { path: "dashboard", element: <DashboardPage /> },
+      { path: "sync", element: <SyncPage /> },
+      { path: "groups", element: <GroupListPage /> },
+      { path: "groups/:groupId", element: <GroupDetailPage /> },
+      { path: "tasks", element: <TaskBoardPage /> },
+
       {
-        element: <MainLayout />,
+        path: "srs",
         children: [
-          { path: "/dashboard", element: <DashboardPage /> },
-          { path: "/sync", element: <SyncPage /> },
-          { path: "/groups", element: <GroupListPage /> },
-          { path: "/groups/:groupId", element: <GroupDetailPage /> },
-          { path: "/tasks", element: <TaskBoardPage /> },
-          { path: "/reports", element: <ProgressReportPage /> },
+          { index: true, element: <SrsGeneratePage /> },
+          { path: "manage", element: <SrsManagementPage /> },
+          { path: ":id", element: <SrsEditorPage /> },
+          { path: "review/:id", element: <SrsReviewPage /> },
+        ],
+      },
+
+      // ===== REPORTS =====
+      {
+        path: "reports",
+        children: [
+          { index: true, element: <ProgressReportPage /> },
+          { path: "manage", element: <ReportManagementPage /> },
+          { path: "editor", element: <ReportEditorPage /> },
+          { path: "review/:reportId", element: <ReportReviewPage /> },
         ],
       },
     ],
   },
 
-  // ================= FALLBACK =================
+  // ================= 404 =================
   {
     path: "*",
-    element: <Navigate to="/login" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
 ]);
