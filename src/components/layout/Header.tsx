@@ -9,18 +9,18 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "../ui/mode-toggle";
 import { User, LayoutDashboard } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store"; // ✅ thêm dòng này
+import { authService } from "@/features/auth/services"; // ✅ thêm dòng này
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { role } = useAuthStore(); // ✅ thêm dòng này
+  // const { role } = useAuthStore(); // ✅ thêm dòng này
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard" },
 
-    // ✅ Ẩn Sync nếu là member
-    ...(role !== "member" ? [{ name: "Sync", path: "/sync" }] : []),
+    { name: "Sync", path: "/sync" },
 
     { name: "Groups", path: "/groups" },
     { name: "Tasks", path: "/tasks" },
@@ -29,10 +29,20 @@ function Header() {
     { name: "Logout", path: "/logout" },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    navigate("/login");
+  const logout = useAuthStore((state) => state.logout);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
+
+  const handleLogout = async () => {
+    try {
+      if (refreshToken) {
+        await authService.logout(refreshToken);
+      }
+    } catch (error) {
+      console.log("Logout API failed, continue logout client");
+    } finally {
+      logout(); // 🔥 reset Zustand + localStorage
+      navigate("/login", { replace: true });
+    }
   };
 
   return (

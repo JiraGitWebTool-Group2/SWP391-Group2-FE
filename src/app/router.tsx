@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
+
 import RequireAdmin from "@/components/guards/RequireAdmin";
 import RequireUser from "@/components/guards/RequireUser";
-// import RequireSyncPermission from "@/components/guards/RequireSyncPermission";
 
 import AdminLayout from "@/components/layout/AdminLayout";
 import MainLayout from "@/components/layout/MainLayout";
@@ -13,21 +13,20 @@ import AssignLecturerPage from "@/features/admin/pages/AssignLecturerPage";
 import IntegrationConfigPage from "@/features/admin/pages/IntegrationConfigPage";
 
 import LoginPage from "@/features/auth/pages/LoginPage";
-import { DashboardPage } from "@/features/statistics/pages/DashboardPage";
+
+import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import GroupListPage from "@/features/groups/pages/GroupListPage";
-import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
-import { ProgressReportPage } from "@/features/statistics/pages/ProgressReportPage";
-import { SrsGeneratePage } from "@/features/requirements/pages/SrsGeneratePage";
-import SyncPage from "@/features/sync/pages/SyncPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
+import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
+import { ProgressReportPage } from "@/features/report/pages/ProgressReportPage";
+import SyncPage from "@/features/sync/pages/SyncPage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
   {
     path: "/",
-    element: <LoginPage />,
+    element: <Navigate to="/login" replace />,
   },
-
   {
     path: "/login",
     element: <LoginPage />,
@@ -35,10 +34,10 @@ export const router = createBrowserRouter([
 
   // ================= ADMIN =================
   {
+    path: "/admin",
     element: <RequireAdmin />,
     children: [
       {
-        path: "/admin",
         element: <AdminLayout />,
         children: [
           { index: true, element: <AdminDashboardPage /> },
@@ -59,21 +58,15 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           { path: "/dashboard", element: <DashboardPage /> },
+          { path: "/sync", element: <SyncPage /> },
           { path: "/groups", element: <GroupListPage /> },
           { path: "/groups/:groupId", element: <GroupDetailPage /> },
           { path: "/tasks", element: <TaskBoardPage /> },
           { path: "/reports", element: <ProgressReportPage /> },
-          { path: "/srs/generate", element: <SrsGeneratePage /> },
         ],
       },
     ],
   },
-
-  // ================= SYNC =================
-  // {
-  //   element: <RequireSyncPermission />,
-  //   children: [{ path: "/sync", element: <SyncPage /> }],
-  // },
 
   // ================= FALLBACK =================
   {
