@@ -24,7 +24,7 @@ function Header() {
 
     { name: "Groups", path: "/groups" },
     { name: "Tasks", path: "/tasks" },
-    { name: "SRS", path: "/srs/generate" },
+    { name: "SRS", path: "/srs" },
     { name: "Reports", path: "/reports" },
     { name: "Logout", path: "/logout" },
   ];
