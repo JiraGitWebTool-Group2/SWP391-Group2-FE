@@ -7,18 +7,31 @@ export default function AdminHeader() {
         Admin Page
       </div>
 
-      <nav className="flex items-center gap-40 text-xl">
+      <nav className="flex items-center gap-10 text-base">
         <Link to="/admin" className="hover:text-blue-500">
           Dashboard
         </Link>
+
         <Link to="/admin/groups" className="hover:text-blue-500">
           Groups
         </Link>
+
         <Link to="/admin/lecturers" className="hover:text-blue-500">
           Lecturers
         </Link>
+
         <Link to="/admin/integration" className="hover:text-blue-500">
           Integration
+        </Link>
+
+        {/* 🔥 Thêm Import */}
+        <Link to="/admin/import-users" className="hover:text-blue-500">
+          Import Users
+        </Link>
+
+        {/* 🔥 Thêm Export */}
+        <Link to="/admin/add-user" className="hover:text-blue-500">
+          Add Users
         </Link>
       </nav>
 

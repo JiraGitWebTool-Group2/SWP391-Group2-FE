@@ -32,42 +32,6 @@ const SyncForm = () => {
           </CardHeader>
 
           <CardContent className="space-y-8">
-            {/* Repository Links */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600">
-                  GitHub Repository URL
-                </label>
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="https://github.com/your-org/your-repo"
-                    className="h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-blue-400"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-600">
-                  Jira Project URL
-                </label>
-                <div className="flex gap-3">
-                  <Input
-                    placeholder="https://your-domain.atlassian.net"
-                    className="h-12 rounded-xl border-slate-200 focus:ring-2 focus:ring-indigo-400"
-                  />
-                </div>
-              </div>
-
-              {/* Check Button */}
-              <Button
-                variant="outline"
-                className="w-full h-11 rounded-xl border-blue-500 text-blue-600 hover:bg-blue-50 flex items-center gap-2"
-              >
-                <CheckCircle size={18} />
-                Check Connection
-              </Button>
-            </div>
-
             {/* Platform Selection */}
             <div className="space-y-3">
               <label className="text-sm font-medium text-slate-600">

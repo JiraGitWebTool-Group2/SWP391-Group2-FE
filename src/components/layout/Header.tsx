@@ -8,19 +8,13 @@ import {
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "../ui/mode-toggle";
 import { User, LayoutDashboard } from "lucide-react";
-import { useAuthStore } from "@/stores/auth.store"; // ✅ thêm dòng này
 
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { role } = useAuthStore(); // ✅ thêm dòng này
-
   const navItems = [
     { name: "Dashboard", path: "/dashboard" },
-
-    // ✅ Ẩn Sync nếu là member
-    ...(role !== "member" ? [{ name: "Sync", path: "/sync" }] : []),
 
     { name: "Groups", path: "/groups" },
     { name: "Tasks", path: "/tasks" },
