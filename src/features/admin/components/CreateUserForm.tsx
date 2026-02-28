@@ -1,29 +1,40 @@
 import { useState } from "react";
+import { createUser } from "../services";
 
 export default function CreateUserForm() {
   const [email, setEmail] = useState("");
-  const [githubUsername, setGithubUsername] = useState("");
-  const [jiraUsername, setJiraUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [password, setPassword] = useState(""); // ✅ thêm password
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newUser = {
-      email,
-      githubUsername,
-      jiraUsername,
-    };
+    try {
+      setLoading(true);
 
-    console.log("New user:", newUser);
+      await createUser({
+        email,
+        fullName,
+        password,
+      });
 
-    // TODO: call API here
+      alert("User created successfully ✅");
 
-    alert("User created successfully!");
+      setEmail("");
+      setFullName("");
+      setPassword(""); // reset password
+    } catch (error: any) {
+      console.error(error);
 
-    // reset form
-    setEmail("");
-    setGithubUsername("");
-    setJiraUsername("");
+      if (error.response?.data) {
+        alert(error.response.data);
+      } else {
+        alert("Create user failed ❌");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,7 +47,6 @@ export default function CreateUserForm() {
           <label className="block mb-2 font-medium">Email</label>
           <input
             type="email"
-            placeholder="example@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -44,27 +54,25 @@ export default function CreateUserForm() {
           />
         </div>
 
-        {/* GitHub */}
+        {/* Full Name */}
         <div>
-          <label className="block mb-2 font-medium">GitHub Username</label>
+          <label className="block mb-2 font-medium">Full Name</label>
           <input
             type="text"
-            placeholder="github_username"
-            value={githubUsername}
-            onChange={(e) => setGithubUsername(e.target.value)}
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
             required
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        {/* Jira */}
+        {/* Password */}
         <div>
-          <label className="block mb-2 font-medium">Jira Username</label>
+          <label className="block mb-2 font-medium">Password</label>
           <input
-            type="text"
-            placeholder="jira_username"
-            value={jiraUsername}
-            onChange={(e) => setJiraUsername(e.target.value)}
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -72,9 +80,10 @@ export default function CreateUserForm() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
         >
-          Add User
+          {loading ? "Creating..." : "Add User"}
         </button>
       </form>
     </div>
