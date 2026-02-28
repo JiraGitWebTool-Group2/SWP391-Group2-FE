@@ -19,9 +19,6 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
 
       login: (accessToken, refreshToken) => {
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
-
         set({
           accessToken,
           refreshToken,
@@ -30,9 +27,6 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-
         set({
           accessToken: null,
           refreshToken: null,
@@ -41,7 +35,6 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setAccessToken: (accessToken) => {
-        localStorage.setItem("accessToken", accessToken);
         set({ accessToken });
       },
     }),
