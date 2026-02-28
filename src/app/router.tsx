@@ -49,13 +49,15 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: "groups", element: <GroupManagementPage /> },
+      {
+        path: "groups/:groupId/integration",
+        element: <IntegrationConfigPage />,
+      },
       { path: "lecturers", element: <LecturerManagementPage /> },
       { path: "assign", element: <AssignLecturerPage /> },
-      { path: "integration", element: <IntegrationConfigPage /> },
       { path: "users", element: <UserManagementPage /> },
     ],
   },
-
   // ================= USER =================
   {
     path: "/",

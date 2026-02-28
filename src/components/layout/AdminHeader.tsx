@@ -1,13 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function AdminHeader() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // TODO: clear token / auth state
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <header className="h-16 border-b bg-background px-6 flex items-center justify-between">
-      <div className="flex items-center gap-3 font-bold text-lg">
-        Admin Page
-      </div>
+      {/* Logo / Title */}
+      <div className="font-bold text-lg">Admin Page</div>
 
-      <nav className="flex items-center gap-10 text-base">
+      {/* Navigation */}
+      <nav className="flex items-center gap-8 text-base">
         <Link to="/admin" className="hover:text-blue-500">
           Dashboard
         </Link>
@@ -20,16 +28,18 @@ export default function AdminHeader() {
           Lecturers
         </Link>
 
-        <Link to="/admin/integration" className="hover:text-blue-500">
-          Integration
-        </Link>
-
         <Link to="/admin/users" className="hover:text-blue-500">
-          Add Users
+          Users
         </Link>
       </nav>
 
-      <button className="text-sm text-red-500">Logout</button>
+      {/* Logout */}
+      <button
+        onClick={handleLogout}
+        className="text-sm text-red-500 hover:underline"
+      >
+        Logout
+      </button>
     </header>
   );
 }

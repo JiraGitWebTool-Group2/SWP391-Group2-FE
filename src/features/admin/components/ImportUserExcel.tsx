@@ -1,6 +1,6 @@
 import { UploadCloud } from "lucide-react";
-import { importUsers } from "../services";
 import * as XLSX from "xlsx";
+import { importUsers } from "../services";
 
 export default function ImportUserExcel() {
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,7 +13,7 @@ export default function ImportUserExcel() {
 
     const users = XLSX.utils.sheet_to_json(sheet);
 
-    await importUsers(users);
+    await importUsers(users); // Assuming projectId is 1 for now
 
     alert("Import thành công!");
   };

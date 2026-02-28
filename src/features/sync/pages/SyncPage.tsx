@@ -1,16 +1,14 @@
-// features/auth/pages/LoginPage.tsx
+// src/features/sync/pages/SyncPage.tsx
 
 import SyncForm from "../components/SyncForm";
+import { startSync } from "../services";
+import type { CreateSyncRunRequest } from "../types";
 
-const SyncPage = () => {
-  return (
-    <div
-      className="
-        flex min-h-screen items-center justify-center p-6
-      "
-    >
-      <SyncForm />
-    </div>
-  );
-};
-export default SyncPage;
+export default function SyncPage() {
+  const handleStartSync = async (payload: CreateSyncRunRequest) => {
+    const res = await startSync(payload);
+    alert(`Sync started. Run ID: ${res.syncRunId}`);
+  };
+
+  return <SyncForm onSubmit={handleStartSync} />;
+}
