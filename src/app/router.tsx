@@ -15,7 +15,6 @@ import UserManagementPage from "@/features/admin/pages/UserManagementPage";
 
 import LoginPage from "@/features/auth/pages/LoginPage";
 
-import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import GroupListPage from "@/features/groups/pages/GroupListPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
@@ -28,6 +27,9 @@ import { SrsGeneratePage } from "@/features/srs/pages/SrsGeneratePage";
 import SrsManagementPage from "@/features/srs/pages/SrsManagementPage";
 import SrsEditorPage from "@/features/srs/pages/SrsEditorPage";
 import SrsReviewPage from "@/features/srs/pages/SrsReviewPage";
+import RepositoryManagementPage from "@/features/admin/pages/RepositoryManagementPage";
+import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
+import AdminGroupDashboardPage from "@/features/admin/pages/AdminGroupDashboardPage";
 
 export const router = createBrowserRouter([
   // ================= ROOT REDIRECT =================
@@ -56,6 +58,16 @@ export const router = createBrowserRouter([
       { path: "lecturers", element: <LecturerManagementPage /> },
       { path: "assign", element: <AssignLecturerPage /> },
       { path: "users", element: <UserManagementPage /> },
+
+      // ✅ thêm dòng này
+      {
+        path: "groups/:groupId/repositories",
+        element: <RepositoryManagementPage />,
+      },
+      {
+        path: "groups/:groupId/dashboard",
+        element: <AdminGroupDashboardPage />,
+      },
     ],
   },
   // ================= USER =================
