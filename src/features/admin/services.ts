@@ -15,13 +15,13 @@ export const createUser = async (data: {
 
 /* GROUPS */
 export const getGroups = () => {
-  return api.get("/groups"); // ❗ bỏ /api
+  return api.get("/groups");
 };
 
 /* INTEGRATION */
 export const getIntegration = (
   projectId: number,
-  provider: "jira" | "github",
+  provider: "JIRA" | "GITHUB", // PHẢI VIẾT HOA
 ) => {
   return api.get(`/projects/${projectId}/integrations/${provider}`);
 };
@@ -29,10 +29,11 @@ export const getIntegration = (
 export const updateIntegration = (
   projectId: number,
   data: {
-    provider: "jira" | "github";
+    provider: "JIRA" | "GITHUB";
     baseUrl?: string;
     org?: string;
-    token: string;
+    projectKey?: string;
+    token?: string;
   },
 ) => {
   return api.put(`/projects/${projectId}/integrations`, data);

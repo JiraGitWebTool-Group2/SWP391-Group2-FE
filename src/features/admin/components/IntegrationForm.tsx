@@ -9,6 +9,8 @@ interface Props {
 export default function IntegrationForm({ groupId }: Props) {
   const [jiraUrl, setJiraUrl] = useState("");
   const [jiraToken, setJiraToken] = useState("");
+  const [jiraProjectKey, setJiraProjectKey] = useState("");
+
   const [githubOrg, setGithubOrg] = useState("");
   const [githubToken, setGithubToken] = useState("");
 
@@ -20,20 +22,30 @@ export default function IntegrationForm({ groupId }: Props) {
   }, [groupId]);
 
   const loadData = async () => {
+    setLoading(true);
+
     try {
-      setLoading(true);
-
-      const jiraRes = await getIntegration(groupId, "jira");
-      const githubRes = await getIntegration(groupId, "github");
-
-      if (jiraRes.data) {
+      // JIRA
+      try {
+        const jiraRes = await getIntegration(groupId, "JIRA");
         setJiraUrl(jiraRes.data.baseUrl || "");
         setJiraToken(jiraRes.data.token || "");
+        setJiraProjectKey(jiraRes.data.projectKey || "");
+      } catch (err: any) {
+        if (err.response?.status !== 404) {
+          throw err;
+        }
       }
 
-      if (githubRes.data) {
+      // GITHUB
+      try {
+        const githubRes = await getIntegration(groupId, "GITHUB");
         setGithubOrg(githubRes.data.org || "");
         setGithubToken(githubRes.data.token || "");
+      } catch (err: any) {
+        if (err.response?.status !== 404) {
+          throw err;
+        }
       }
     } catch (err) {
       toast.error("Failed to load integration");
@@ -46,22 +58,33 @@ export default function IntegrationForm({ groupId }: Props) {
     try {
       setSaving(true);
 
-      // PUT jira
-      await updateIntegration(groupId, {
-        provider: "jira",
-        baseUrl: jiraUrl,
-        token: jiraToken,
-      });
+      // Validate JIRA project key
+      if (jiraUrl || jiraToken || jiraProjectKey) {
+        if (!jiraProjectKey) {
+          toast.error("Jira Project Key is required");
+          return;
+        }
 
-      // PUT github
-      await updateIntegration(groupId, {
-        provider: "github",
-        org: githubOrg,
-        token: githubToken,
-      });
+        await updateIntegration(groupId, {
+          provider: "JIRA",
+          baseUrl: jiraUrl,
+          projectKey: jiraProjectKey,
+          token: jiraToken,
+        });
+      }
+
+      // GITHUB
+      if (githubOrg || githubToken) {
+        await updateIntegration(groupId, {
+          provider: "GITHUB",
+          org: githubOrg,
+          token: githubToken,
+        });
+      }
 
       toast.success("Saved successfully!");
     } catch (err) {
+      console.error(err);
       toast.error("Save failed");
     } finally {
       setSaving(false);
@@ -81,6 +104,13 @@ export default function IntegrationForm({ groupId }: Props) {
           placeholder="Jira Base URL"
           value={jiraUrl}
           onChange={(e) => setJiraUrl(e.target.value)}
+        />
+
+        <input
+          className="w-full border p-2 rounded"
+          placeholder="Jira Project Key"
+          value={jiraProjectKey}
+          onChange={(e) => setJiraProjectKey(e.target.value)}
         />
 
         <input
