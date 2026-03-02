@@ -1,124 +1,141 @@
 import { useEffect, useState } from "react";
 import { getIntegration, updateIntegration } from "../services";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface Props {
-  groupId: number; // groupId = projectId
+  projectId: number;
 }
 
-export default function IntegrationForm({ groupId }: Props) {
-  const [jiraUrl, setJiraUrl] = useState("");
+export default function IntegrationForm({ projectId }: Props) {
+  // ✅ JIRA (3 useState như bạn yêu cầu)
+  const [baseUrl, setBaseUrl] = useState("");
+  const [projectKey, setProjectKey] = useState("");
   const [jiraToken, setJiraToken] = useState("");
+
+  // ✅ GITHUB
   const [githubOrg, setGithubOrg] = useState("");
   const [githubToken, setGithubToken] = useState("");
 
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    loadData();
-  }, [groupId]);
 
   const loadData = async () => {
     try {
       setLoading(true);
 
-      const jiraRes = await getIntegration(groupId, "jira");
-      const githubRes = await getIntegration(groupId, "github");
+      // Load Jira
+      try {
+        const jira = await getIntegration(projectId, "JIRA");
+        if (jira) {
+          setBaseUrl(jira.baseUrl || "");
+          setProjectKey(jira.projectKey || "");
+          setJiraToken(jira.token || "");
+        }
+      } catch {}
 
-      if (jiraRes.data) {
-        setJiraUrl(jiraRes.data.baseUrl || "");
-        setJiraToken(jiraRes.data.token || "");
-      }
-
-      if (githubRes.data) {
-        setGithubOrg(githubRes.data.org || "");
-        setGithubToken(githubRes.data.token || "");
-      }
-    } catch (err) {
+      // Load GitHub
+      try {
+        const github = await getIntegration(projectId, "GITHUB");
+        if (github) {
+          setGithubOrg(github.org || "");
+          setGithubToken(github.token || "");
+        }
+      } catch {}
+    } catch {
       toast.error("Failed to load integration");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSave = async () => {
-    try {
-      setSaving(true);
+  useEffect(() => {
+    loadData();
+  }, [projectId]);
 
-      // PUT jira
-      await updateIntegration(groupId, {
-        provider: "jira",
-        baseUrl: jiraUrl,
+  const saveJira = async () => {
+    try {
+      await updateIntegration(projectId, {
+        provider: "JIRA",
+        baseUrl: baseUrl,
+        projectKey: projectKey,
         token: jiraToken,
       });
 
-      // PUT github
-      await updateIntegration(groupId, {
-        provider: "github",
+      toast.success("Jira saved");
+    } catch {
+      toast.error("Failed to save Jira integration");
+    }
+  };
+
+  const saveGithub = async () => {
+    try {
+      await updateIntegration(projectId, {
+        provider: "GITHUB",
         org: githubOrg,
         token: githubToken,
       });
 
-      toast.success("Saved successfully!");
-    } catch (err) {
-      toast.error("Save failed");
-    } finally {
-      setSaving(false);
+      toast.success("Github saved");
+    } catch {
+      toast.error("Failed to save Github integration");
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="space-y-6 max-w-xl">
-      {/* Jira */}
+    <div className="space-y-6">
+      {/* JIRA */}
       <div className="border p-4 rounded space-y-3">
-        <h2 className="font-semibold">Jira</h2>
+        <h3 className="font-bold">Jira</h3>
 
         <input
-          className="w-full border p-2 rounded"
-          placeholder="Jira Base URL"
-          value={jiraUrl}
-          onChange={(e) => setJiraUrl(e.target.value)}
+          className="border p-2 w-full"
+          placeholder="Base URL"
+          value={baseUrl}
+          onChange={(e) => setBaseUrl(e.target.value)}
         />
 
         <input
-          type="password"
-          className="w-full border p-2 rounded"
-          placeholder="Jira Token"
+          className="border p-2 w-full"
+          placeholder="Project Key"
+          value={projectKey}
+          onChange={(e) => setProjectKey(e.target.value)}
+        />
+
+        <input
+          className="border p-2 w-full"
+          placeholder="Token"
           value={jiraToken}
           onChange={(e) => setJiraToken(e.target.value)}
         />
+
+        <button className="bg-blue-500 text-white px-4 py-2" onClick={saveJira}>
+          Save
+        </button>
       </div>
 
-      {/* GitHub */}
+      {/* GITHUB */}
       <div className="border p-4 rounded space-y-3">
-        <h2 className="font-semibold">GitHub</h2>
+        <h3 className="font-bold">GitHub</h3>
 
         <input
-          className="w-full border p-2 rounded"
+          className="border p-2 w-full"
           placeholder="Organization"
           value={githubOrg}
           onChange={(e) => setGithubOrg(e.target.value)}
         />
 
         <input
-          type="password"
-          className="w-full border p-2 rounded"
-          placeholder="GitHub Token"
+          className="border p-2 w-full"
+          placeholder="Token"
           value={githubToken}
           onChange={(e) => setGithubToken(e.target.value)}
         />
-      </div>
 
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        {saving ? "Saving..." : "Save"}
-      </button>
+        <button className="bg-black text-white px-4 py-2" onClick={saveGithub}>
+          Save
+        </button>
+      </div>
     </div>
   );
 }

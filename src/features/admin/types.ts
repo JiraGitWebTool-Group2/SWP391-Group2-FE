@@ -1,6 +1,8 @@
+export type IntegrationProvider = "JIRA" | "GITHUB";
+
 export interface IntegrationConfigRequest {
-  provider: string;
-  baseUrl: string;
+  provider: IntegrationProvider;
+  baseUrl?: string;
   projectKey?: string;
   org?: string;
   token: string;
@@ -13,12 +15,6 @@ export interface Group {
   createdAt: string;
 }
 export interface CreateGroupRequest {
-  groupName: string;
-  description: string;
-}
-
-export interface Group {
-  groupId: number;
   groupName: string;
   description: string;
 }
@@ -61,4 +57,21 @@ export interface Snapshot {
     startedAt: string;
     finishedAt: string;
   };
+}
+
+// src/features/admin/types.ts
+
+export interface Project {
+  projectId: number;
+  projectName: string;
+  description?: string;
+  groupId: number;
+  createdAt?: string;
+}
+
+export interface CreateProjectRequest {
+  projectName: string;
+  jiraProjectKey: string;
+  githubOrg: string;
+  description: string;
 }

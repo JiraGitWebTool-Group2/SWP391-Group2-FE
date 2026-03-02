@@ -31,6 +31,8 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
         return;
       }
 
+      //trong file này thêm 1 cái /me để lấy thông tin user, nếu thành công thì mới login, nếu thất bại thì báo lỗi token không hợp lệ
+
       setIsLoading(true);
 
       const response = await authService.googleLogin({
