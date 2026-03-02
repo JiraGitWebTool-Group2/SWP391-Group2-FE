@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import type {
   CreateOrUpdateRepositoryRequest,
@@ -8,12 +9,15 @@ import { createRepository, updateRepository } from "../services";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+
 interface Props {
   projectId: number;
   mode: "create" | "edit";
   repository?: RepositoryResponse;
   onSuccess: () => void;
 }
+
 export default function RepositoryForm({
   projectId,
   mode,
@@ -25,7 +29,9 @@ export default function RepositoryForm({
     repoUrl: "",
     defaultBranch: "main",
   });
+
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (mode === "edit" && repository) {
       setFormData({
@@ -35,68 +41,94 @@ export default function RepositoryForm({
       });
     }
   }, [mode, repository]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       if (mode === "create") {
         await createRepository(projectId, formData);
+
+        toast.success("Repository created successfully 🎉");
+
+        // Reset form sau khi tạo thành công
+        setFormData({
+          repoName: "",
+          repoUrl: "",
+          defaultBranch: "main",
+        });
       } else {
         if (!repository) return;
+
         await updateRepository(projectId, repository.id, formData);
+
+        toast.success("Repository updated successfully 🎉");
       }
+
       onSuccess();
     } catch (error: any) {
       console.error(error);
-      alert("Failed ❌");
+
+      const message =
+        error?.response?.data?.message || "Failed to save repository";
+
+      toast.error(message);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {" "}
+      {/* Repository Name */}
       <div className="space-y-2">
-        {" "}
-        <Label>Repository Name</Label>{" "}
+        <Label>Repository Name</Label>
         <Input
           name="repoName"
           value={formData.repoName}
           onChange={handleChange}
           required
-        />{" "}
-      </div>{" "}
+        />
+      </div>
+
+      {/* Repository URL */}
       <div className="space-y-2">
-        {" "}
-        <Label>Repository URL</Label>{" "}
+        <Label>Repository URL</Label>
         <Input
           name="repoUrl"
           value={formData.repoUrl}
           onChange={handleChange}
           required
-        />{" "}
-      </div>{" "}
+        />
+      </div>
+
+      {/* Default Branch */}
       <div className="space-y-2">
-        {" "}
-        <Label>Default Branch</Label>{" "}
+        <Label>Default Branch</Label>
         <Input
           name="defaultBranch"
           value={formData.defaultBranch}
           onChange={handleChange}
           required
-        />{" "}
-      </div>{" "}
-      <Button className="w-full" disabled={loading}>
-        {" "}
+        />
+      </div>
+
+      {/* Submit Button */}
+      <Button type="submit" className="w-full" disabled={loading}>
         {loading
           ? "Processing..."
           : mode === "create"
             ? "Create Repository"
-            : "Update Repository"}{" "}
-      </Button>{" "}
+            : "Update Repository"}
+      </Button>
     </form>
   );
 }

@@ -2,25 +2,41 @@ import { api } from "@/lib/axios";
 import type {
   CreateGroupRequest,
   CreateOrUpdateRepositoryRequest,
+  CreateProjectRequest,
   CreateUserRequest,
   Group,
+  IntegrationConfigRequest,
+  Project,
+  RepositoryResponse,
 } from "./types";
 
-export const importUsers = async (users: any[]) => {
-  return api.post("/admin/users/import", users);
-};
-export const createUser = async (data: CreateUserRequest) => {
-  const response = await api.post("/Users", data);
-  return response.data;
+/* ================= USERS ================= */
+
+export const importUsersExcel = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await api.post("/Users/import-excel", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return res.data;
 };
 
-/* ================= GROUPS ================= */ // GET /groups
+export const createUser = async (data: CreateUserRequest) => {
+  const res = await api.post("/users", data);
+  return res.data;
+};
+
+/* ================= GROUPS ================= */
+
 export const getGroups = async (): Promise<Group[]> => {
   const res = await api.get("/groups");
   return res.data;
 };
 
-// POST /groups
 export const createGroup = async (
   payload: CreateGroupRequest,
 ): Promise<Group> => {
@@ -28,44 +44,85 @@ export const createGroup = async (
   return res.data;
 };
 
-/* ================= INTEGRATION ================= */
-export const getIntegration = (
+/* ================= INTEGRATIONS ================= */
+
+export const getIntegration = async (
   projectId: number,
-  provider: "jira" | "github",
+  provider: IntegrationConfigRequest["provider"],
 ) => {
-  return api.get(`/projects/${projectId}/integrations/${provider}`);
+  const res = await api.get(`/projects/${projectId}/integrations/${provider}`);
+  return res.data;
 };
 
-export const updateIntegration = (
+export const updateIntegration = async (
   projectId: number,
-  data: {
-    provider: "jira" | "github";
-    baseUrl?: string;
-    org?: string;
-    token: string;
-  },
+  data: IntegrationConfigRequest,
 ) => {
-  return api.put(`/projects/${projectId}/integrations`, data);
+  const res = await api.put(`/projects/${projectId}/integrations`, data);
+  return res.data;
 };
+
+/* ================= REPOSITORIES ================= */
 
 export const createRepository = async (
   projectId: number,
   data: CreateOrUpdateRepositoryRequest,
-) => {
-  return api.post(`/projects/${projectId}/repositories`, data);
+): Promise<RepositoryResponse> => {
+  const res = await api.post(`/projects/${projectId}/repositories`, data);
+  return res.data;
 };
 
 export const updateRepository = async (
   projectId: number,
-  repoId: number,
+  repositoryId: number,
   data: CreateOrUpdateRepositoryRequest,
-) => {
-  return api.put(`/projects/${projectId}/repositories/${repoId}`, data);
+): Promise<RepositoryResponse> => {
+  const res = await api.put(
+    `/projects/${projectId}/repositories/${repositoryId}`,
+    data,
+  );
+  return res.data;
 };
 
 /* ================= SNAPSHOTS ================= */
 
 export const getSnapshotsByGroup = async (groupId: number) => {
   const res = await api.get(`/groups/${groupId}/snapshots`);
+  return res.data;
+};
+
+/**
+ * GET /api/groups/{groupId}/projects
+ * Lấy danh sách project theo group
+ */
+export const getProjectsByGroup = async (
+  groupId: number,
+): Promise<Project[]> => {
+  const res = await api.get(`/groups/${groupId}/projects`);
+  return res.data;
+};
+
+/**
+ * POST /api/groups/{groupId}/projects
+ * Tạo project trong group
+ */
+export const createProjectInGroup = async (
+  groupId: number,
+  payload: CreateProjectRequest,
+): Promise<Project> => {
+  const res = await api.post(`/groups/${groupId}/projects`, payload);
+  return res.data;
+};
+
+/**
+ * GET /api/projects/{projectId}
+ * Lấy project theo id (optional)
+ */
+export const getProjectById = async (
+  projectId?: number,
+): Promise<Project | null> => {
+  if (!projectId) return null;
+
+  const res = await api.get(`/projects/${projectId}`);
   return res.data;
 };

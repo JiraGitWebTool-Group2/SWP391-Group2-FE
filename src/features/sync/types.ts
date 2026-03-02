@@ -1,5 +1,3 @@
-// src/features/sync/types.ts
-
 export type ScopeType = "SPRINT" | "BACKLOG" | "CUSTOM";
 
 export interface CreateSyncRunRequest {
@@ -7,10 +5,19 @@ export interface CreateSyncRunRequest {
   includeJira: boolean;
   includeGithub: boolean;
   scopeType: ScopeType;
-  sprintId?: number | null;
+  sprintId: number | null;
 }
 
 export interface StartSyncResponse {
   syncRunId: number;
   status: string;
+}
+
+export interface SyncRunDetail {
+  syncRunId: number;
+  notes?: string;
+  runStatus: "SUCCESS" | "FAILED" | "RUNNING";
+  startedAt: string;
+  finishedAt?: string;
+  snapshotId?: number;
 }
