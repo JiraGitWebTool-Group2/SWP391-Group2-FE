@@ -1,24 +1,24 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import RequireAdmin from "@/components/guards/RequireAdmin";
-import RequireUser from "@/components/guards/RequireUser";
-
 import AdminLayout from "@/components/layout/AdminLayout";
 import MainLayout from "@/components/layout/MainLayout";
 
 import AdminDashboardPage from "@/features/admin/pages/AdminDashboardPage";
-import GroupManagementPage from "@/features/admin/pages/GroupManagementPage";
+import SemesterManagementPage from "@/features/admin/pages/SemesterManagementPage";
+import ClassManagementPage from "@/features/admin/pages/ClassManagementPage";
+import AdminClassDetailPage from "@/features/admin/pages/AdminClassDetailPage";
+
 import LecturerManagementPage from "@/features/admin/pages/LecturerManagementPage";
 import AssignLecturerPage from "@/features/admin/pages/AssignLecturerPage";
 import IntegrationConfigPage from "@/features/admin/pages/IntegrationConfigPage";
 import UserManagementPage from "@/features/admin/pages/UserManagementPage";
-import RepositoryManagementPage from "@/features/admin/pages/RepositoryManagementPage";
 import AdminGroupDashboardPage from "@/features/admin/pages/AdminGroupDashboardPage";
 
 import LoginPage from "@/features/auth/pages/LoginPage";
 
 import GroupListPage from "@/features/groups/pages/GroupListPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
+
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
 
 import ReportManagementPage from "@/features/report/pages/ReportManagementPage";
@@ -36,7 +36,6 @@ import SyncResultPage from "@/features/sync/pages/SyncResultPage";
 
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import SnapshotDetailPage from "@/features/snapshots/pages/SnapshotDetailPage";
-import ProjectListPage from "@/features/admin/pages/ProjectListPage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
@@ -45,60 +44,90 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
 
-  // ================= ADMIN ROUTES =================
+  // ================= ADMIN =================
   {
     path: "/admin",
     element: <AdminLayout />,
     children: [
       { index: true, element: <AdminDashboardPage /> },
 
-      // ===== GROUP =====
-      { path: "groups", element: <GroupManagementPage /> },
-
-      // ===== PROJECT (NEW FLOW) =====
+      // ===== SEMESTER =====
       {
-        path: "groups/:groupId/projects",
-        element: <ProjectListPage />,
+        path: "semesters",
+        element: <SemesterManagementPage />,
       },
 
-      // ===== PROJECT DETAIL LEVEL =====
+      // ===== CLASS LIST OF SEMESTER =====
+      {
+        path: "semesters/:semesterId/classes",
+        element: <ClassManagementPage />,
+      },
+
+      // ===== CLASS DETAIL =====
+      {
+        path: "classes/:classId",
+        element: <AdminClassDetailPage />,
+      },
+
+      // ===== ASSIGN LECTURER =====
+      {
+        path: "classes/:classId/assign",
+        element: <AssignLecturerPage />,
+      },
+
+      // ===== PROJECT INTEGRATION =====
       {
         path: "projects/:projectId/integration",
         element: <IntegrationConfigPage />,
       },
-      {
-        path: "projects/:projectId/repositories",
-        element: <RepositoryManagementPage />,
-      },
 
-      // ===== GROUP DASHBOARD (snapshot overview) =====
+      // ===== GROUP DASHBOARD =====
       {
         path: "groups/:groupId/dashboard",
         element: <AdminGroupDashboardPage />,
       },
 
-      // ===== OTHER ADMIN =====
-      { path: "lecturers", element: <LecturerManagementPage /> },
-      { path: "assign", element: <AssignLecturerPage /> },
-      { path: "users", element: <UserManagementPage /> },
+      // ===== LECTURERS =====
+      {
+        path: "lecturers",
+        element: <LecturerManagementPage />,
+      },
+
+      // ===== USERS =====
+      {
+        path: "users",
+        element: <UserManagementPage />,
+      },
     ],
   },
 
-  // ================= USER ROUTES =================
+  // ================= USER =================
   {
     path: "/",
     element: <MainLayout />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
 
-      { path: "dashboard", element: <DashboardPage /> },
+      {
+        path: "dashboard",
+        element: <DashboardPage />,
+      },
 
-      { path: "groups", element: <GroupListPage /> },
-      { path: "groups/:groupId", element: <GroupDetailPage /> },
+      {
+        path: "groups",
+        element: <GroupListPage />,
+      },
+      {
+        path: "groups/:groupId",
+        element: <GroupDetailPage />,
+      },
 
-      { path: "tasks", element: <TaskBoardPage /> },
+      {
+        path: "tasks",
+        element: <TaskBoardPage />,
+      },
 
-      // ===== SYNC THEO PROJECT =====
+      // ===== SYNC =====
       {
         path: "sync",
         element: <SyncPage />,
