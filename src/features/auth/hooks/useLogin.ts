@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/auth.store";
 import { authService } from "../services";
 import type { CredentialResponse } from "@react-oauth/google";
+import { toast } from "sonner";
 
 interface UseGoogleLoginReturn {
   handleGoogleSuccess: (
@@ -27,11 +28,11 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
       setError(null);
 
       if (!credentialResponse.credential) {
-        setError("Không nhận được token từ Google");
+        const message = "Failed to receive token from Google";
+        setError(message);
+        toast.error(message);
         return;
       }
-
-      //trong file này thêm 1 cái /me để lấy thông tin user, nếu thành công thì mới login, nếu thất bại thì báo lỗi token không hợp lệ
 
       setIsLoading(true);
 
@@ -39,24 +40,42 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
         idToken: credentialResponse.credential,
       });
 
+      // If backend returns no token → account not registered
+      if (!response.data?.accessToken) {
+        const message = "This account is not registered";
+        setError(message);
+        toast.error(message);
+        return;
+      }
+
       const { accessToken, refreshToken } = response.data;
 
+      // Save token to store
       login(accessToken, refreshToken);
+
+      toast.success("Login successful");
 
       navigate("/dashboard", { replace: true });
     } catch (err: any) {
+      let message = "";
+
       if (err.response) {
-        setError(err.response.data?.message || "Lỗi server");
+        message = err.response.data?.message || "Server error";
       } else {
-        setError("Không thể kết nối đến server");
+        message = "Unable to connect to the server";
       }
+
+      setError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleError = () => {
-    setError("Đăng nhập Google thất bại");
+    const message = "Google login failed";
+    setError(message);
+    toast.error(message);
   };
 
   return {

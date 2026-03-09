@@ -11,6 +11,20 @@ import { User, LayoutDashboard } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { authService } from "@/features/auth/services";
 import { useProjectStore } from "@/stores/project.store";
+import { toast } from "sonner";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
+import { Button } from "../ui/button";
 
 function Header() {
   const location = useLocation();
@@ -29,7 +43,7 @@ function Header() {
       ? [
           {
             name: "Sync",
-            path: "/sync", // dùng route hiện tại của mày
+            path: "/sync",
           },
         ]
       : []),
@@ -48,8 +62,9 @@ function Header() {
     } catch {
       console.log("Logout API failed");
     } finally {
-      clearProject(); // 🔥 clear project khi logout
+      clearProject();
       logout();
+      toast.success("Logout successful");
       navigate("/login", { replace: true });
     }
   };
@@ -88,21 +103,38 @@ function Header() {
                 </NavigationMenuItem>
               );
             })}
+          </NavigationMenu>
 
-            <NavigationMenuItem className="list-none">
-              <NavigationMenuLink asChild>
-                <button
+          {/* Logout Button + Dialog */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm">
+                Logout
+              </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent className="rounded-xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+
+                <AlertDialogDescription>
+                  Are you sure you want to log out? You will need to sign in
+                  again to continue.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                <AlertDialogAction
                   onClick={handleLogout}
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    "px-4 py-2 text-sm rounded-xl hover:text-red-600",
-                  )}
+                  className="bg-red-600 hover:bg-red-700"
                 >
                   Logout
-                </button>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenu>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
 

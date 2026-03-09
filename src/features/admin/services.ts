@@ -1,5 +1,9 @@
 import { api } from "@/lib/axios";
 import type {
+  AddStudentsBulkRequest,
+  ClassDetail,
+  ClassResponse,
+  CreateClassRequest,
   CreateGroupRequest,
   CreateOrUpdateRepositoryRequest,
   CreateProjectRequest,
@@ -8,6 +12,7 @@ import type {
   IntegrationConfigRequest,
   Project,
   RepositoryResponse,
+  Semester,
 } from "./types";
 
 /* ================= USERS ================= */
@@ -124,5 +129,112 @@ export const getProjectById = async (
   if (!projectId) return null;
 
   const res = await api.get(`/projects/${projectId}`);
+  return res.data;
+};
+
+/* ================= SEMESTERS ================= */
+
+export const getSemesters = async (): Promise<Semester[]> => {
+  const res = await api.get("/semesters");
+  return res.data;
+};
+
+export const createSemester = async (data: any) => {
+  const res = await api.post("/semesters", data);
+  return res.data;
+};
+
+export const updateSemester = async (id: number, data: any) => {
+  const res = await api.put(`/semesters/${id}`, data);
+  return res.data;
+};
+
+export const deleteSemester = async (id: number) => {
+  const res = await api.delete(`/semesters/${id}`);
+  return res.data;
+};
+export const getSemesterById = async (id: number) => {
+  const res = await api.get(`/semesters/${id}`);
+  return res.data;
+};
+
+/* ================= CLASSES ================= */
+/* ================= CLASSES ================= */
+
+export const getClasses = async () => {
+  const res = await api.get("/classes");
+  return res.data;
+};
+
+export const createClass = async (data: {
+  semesterId: number;
+  classCode: string;
+  courseCode: string;
+  className: string;
+  lecturerUserId?: number;
+  status?: string;
+}) => {
+  const res = await api.post(`/classes`, data);
+  return res.data;
+};
+
+export const updateClass = async (classId: number, data: any) => {
+  const res = await api.put(`/classes/${classId}`, data);
+  return res.data;
+};
+
+export const deleteClass = async (classId: number) => {
+  const res = await api.delete(`/classes/${classId}`);
+  return res.data;
+};
+
+/* ================= CLASS LECTURERS ================= */
+
+export const assignLecturer = async (classId: number, lecturerId: number) => {
+  const res = await api.post(`/classes/${classId}/lecturers`, {
+    lecturerId,
+  });
+  return res.data;
+};
+export const getLecturersOfClass = async (classId: number) => {
+  const res = await api.get(`/classes/${classId}/lecturers`);
+  return res.data;
+};
+
+export const removeLecturer = async (classId: number, lecturerId: number) => {
+  const res = await api.delete(`/classes/${classId}/lecturers/${lecturerId}`);
+  return res.data;
+};
+
+export const getLecturers = async () => {
+  const res = await api.get("/lecturers");
+  return res.data;
+};
+
+export const getClassById = async (id: number): Promise<ClassDetail> => {
+  const res = await api.get(`/classes/${id}`);
+  return res.data;
+};
+
+/* ================= CLASS STUDENTS ================= */
+
+export const getStudentsOfClass = async (classId: number) => {
+  const res = await api.get(`/classes/${classId}/students`);
+  return res.data;
+};
+
+export const addStudentsBulk = async (
+  classId: number,
+  payload: AddStudentsBulkRequest,
+) => {
+  const res = await api.post(`/classes/${classId}/students/bulk`, payload);
+  return res.data;
+};
+
+export const removeStudentFromClass = async (
+  classId: number,
+  studentId: number,
+) => {
+  const res = await api.delete(`/classes/${classId}/students/${studentId}`);
   return res.data;
 };

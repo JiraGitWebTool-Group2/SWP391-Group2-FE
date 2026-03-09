@@ -3,8 +3,8 @@ import { createUser } from "../services";
 
 export default function CreateUserForm() {
   const [email, setEmail] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [password, setPassword] = useState(""); // ✅ thêm password
+  // const [fullName, setFullName] = useState("");
+  // const [password, setPassword] = useState(""); // ✅ thêm password
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -15,15 +15,15 @@ export default function CreateUserForm() {
 
       await createUser({
         email,
-        fullName,
-        password,
+        // fullName,
+        // password,
       });
 
       alert("User created successfully ✅");
 
       setEmail("");
-      setFullName("");
-      setPassword(""); // reset password
+      // setFullName("");
+      // setPassword(""); // reset password
     } catch (error: any) {
       console.error(error);
 
@@ -54,7 +54,7 @@ export default function CreateUserForm() {
           />
         </div>
 
-        {/* Full Name */}
+        {/* Full Name
         <div>
           <label className="block mb-2 font-medium">Full Name</label>
           <input
@@ -67,7 +67,7 @@ export default function CreateUserForm() {
         </div>
 
         {/* Password */}
-        <div>
+        {/* <div>
           <label className="block mb-2 font-medium">Password</label>
           <input
             type="password"
@@ -76,7 +76,7 @@ export default function CreateUserForm() {
             required
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </div>
+        </div> */}
 
         <button
           type="submit"
