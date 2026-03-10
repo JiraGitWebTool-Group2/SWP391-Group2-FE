@@ -216,6 +216,16 @@ export const getClassById = async (id: number): Promise<ClassDetail> => {
   return res.data;
 };
 
+export const getLecturerById = async (lecturerId: number) => {
+  const res = await api.get(`/lecturers/${lecturerId}`);
+  return res.data;
+};
+
+export const getClassesOfLecturer = async (lecturerId: number) => {
+  const res = await api.get(`/lecturers/${lecturerId}/classes`);
+  return res.data;
+};
+
 /* ================= CLASS STUDENTS ================= */
 
 export const getStudentsOfClass = async (classId: number) => {

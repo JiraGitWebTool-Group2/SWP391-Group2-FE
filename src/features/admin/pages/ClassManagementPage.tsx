@@ -5,7 +5,7 @@ import CreateClassForm from "../components/CreateClassForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 
 import {
   createClass,
@@ -111,9 +111,19 @@ export default function ClassManagementPage() {
       {/* HEADER */}
 
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">
-          {semester ? `Classes - ${semester.name}` : "Classes"}
-        </h1>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigate("/admin/semesters")}
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+
+          <h1 className="text-2xl font-semibold">
+            {semester ? `Classes - ${semester.name}` : "Classes"}
+          </h1>
+        </div>
 
         <Button
           onClick={() => setShowForm(true)}

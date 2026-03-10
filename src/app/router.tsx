@@ -36,6 +36,7 @@ import SyncResultPage from "@/features/sync/pages/SyncResultPage";
 
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import SnapshotDetailPage from "@/features/snapshots/pages/SnapshotDetailPage";
+import LecturerDetailPage from "@/features/admin/pages/LecturerDetailPage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
@@ -91,6 +92,10 @@ export const router = createBrowserRouter([
       {
         path: "lecturers",
         element: <LecturerManagementPage />,
+      },
+      {
+        path: "lecturers/:id",
+        element: <LecturerDetailPage />,
       },
 
       // ===== USERS =====

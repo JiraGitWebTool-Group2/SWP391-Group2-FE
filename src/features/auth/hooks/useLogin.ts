@@ -58,7 +58,15 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
 
       toast.success("Login successful");
 
-      navigate("/dashboard", { replace: true });
+      console.log("ROLE AFTER LOGIN:", role);
+
+      const userRole = role?.toLowerCase();
+
+      if (userRole === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
     } catch (err: any) {
       let message = "";
 
