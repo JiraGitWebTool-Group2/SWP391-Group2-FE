@@ -1,8 +1,13 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
+// ===== GUARDS =====
+import RequireUser from "@/components/guards/RequireUser";
+
+// ===== LAYOUTS =====
 import AdminLayout from "@/components/layout/AdminLayout";
 import MainLayout from "@/components/layout/MainLayout";
 
+// ===== ADMIN PAGES =====
 import AdminDashboardPage from "@/features/admin/pages/AdminDashboardPage";
 import SemesterManagementPage from "@/features/admin/pages/SemesterManagementPage";
 import ClassManagementPage from "@/features/admin/pages/ClassManagementPage";
@@ -13,30 +18,32 @@ import AssignLecturerPage from "@/features/admin/pages/AssignLecturerPage";
 import IntegrationConfigPage from "@/features/admin/pages/IntegrationConfigPage";
 import UserManagementPage from "@/features/admin/pages/UserManagementPage";
 import AdminGroupDashboardPage from "@/features/admin/pages/AdminGroupDashboardPage";
+import LecturerDetailPage from "@/features/admin/pages/LecturerDetailPage";
 
+// ===== AUTH PAGES =====
 import LoginPage from "@/features/auth/pages/LoginPage";
 
+// ===== USER PAGES =====
+import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import GroupListPage from "@/features/groups/pages/GroupListPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
-
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
+import SyncPage from "@/features/sync/pages/SyncPage";
+import SyncResultPage from "@/features/sync/pages/SyncResultPage";
+import SnapshotDetailPage from "@/features/snapshots/pages/SnapshotDetailPage";
 
-import ReportManagementPage from "@/features/report/pages/ReportManagementPage";
-import ReportEditorPage from "@/features/report/pages/ReportEditorPage";
-import ReportReviewPage from "@/features/report/pages/ReportReviewPage";
-import ProgressReportPage from "@/features/report/pages/ProgressReportPage";
-
+// ===== SRS PAGES =====
 import { SrsGeneratePage } from "@/features/srs/pages/SrsGeneratePage";
 import SrsManagementPage from "@/features/srs/pages/SrsManagementPage";
 import SrsEditorPage from "@/features/srs/pages/SrsEditorPage";
 import SrsReviewPage from "@/features/srs/pages/SrsReviewPage";
 
-import SyncPage from "@/features/sync/pages/SyncPage";
-import SyncResultPage from "@/features/sync/pages/SyncResultPage";
-
-import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
-import SnapshotDetailPage from "@/features/snapshots/pages/SnapshotDetailPage";
-import LecturerDetailPage from "@/features/admin/pages/LecturerDetailPage";
+// ===== REPORT PAGES =====
+import ReportManagementPage from "@/features/report/pages/ReportManagementPage";
+import ReportEditorPage from "@/features/report/pages/ReportEditorPage";
+import ReportReviewPage from "@/features/report/pages/ReportReviewPage";
+import ProgressReportPage from "@/features/report/pages/ProgressReportPage";
+import RequireAdmin from "@/components/guards/RequireAdmin";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
@@ -48,7 +55,11 @@ export const router = createBrowserRouter([
   // ================= ADMIN =================
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: (
+      <RequireAdmin>
+        <AdminLayout />
+      </RequireAdmin>
+    ),
     children: [
       { index: true, element: <AdminDashboardPage /> },
 
@@ -106,18 +117,22 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // ================= USER =================
+  // ================= USER (STUDENT & LECTURER) =================
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <RequireUser>
+        <MainLayout />
+      </RequireUser>
+    ),
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
 
+      // ================= CÁC TRANG CHUNG (Ai cũng truy cập được) =================
       {
         path: "dashboard",
         element: <DashboardPage />,
       },
-
       {
         path: "groups",
         element: <GroupListPage />,
@@ -126,13 +141,6 @@ export const router = createBrowserRouter([
         path: "groups/:groupId",
         element: <GroupDetailPage />,
       },
-
-      {
-        path: "tasks",
-        element: <TaskBoardPage />,
-      },
-
-      // ===== SYNC =====
       {
         path: "sync",
         element: <SyncPage />,
@@ -146,25 +154,57 @@ export const router = createBrowserRouter([
         element: <SnapshotDetailPage />,
       },
 
-      // ===== SRS =====
+      // ================= CÁC TRANG DÀNH RIÊNG CHO STUDENT =================
       {
-        path: "srs",
+        element: <RequireUser allowedRoles={["STUDENT"]} />,
         children: [
-          { index: true, element: <SrsGeneratePage /> },
-          { path: "manage", element: <SrsManagementPage /> }, //student manage
-          { path: ":id", element: <SrsEditorPage /> }, //student edit
-          { path: "review/:id", element: <SrsReviewPage /> }, //lecturer review
+          {
+            path: "tasks",
+            element: <TaskBoardPage />,
+          },
+          // ----- SRS -----
+          {
+            path: "srs",
+            element: <SrsGeneratePage />,
+          },
+          {
+            path: "srs/manage",
+            element: <SrsManagementPage />,
+          },
+          {
+            path: "srs/:id",
+            element: <SrsEditorPage />,
+          },
+          // ----- REPORT -----
+          {
+            path: "reports",
+            element: <ProgressReportPage />,
+          },
+          {
+            path: "reports/manage",
+            element: <ReportManagementPage />,
+          },
+          {
+            path: "reports/editor",
+            element: <ReportEditorPage />,
+          },
         ],
       },
 
-      // ===== REPORT =====
+      // ================= CÁC TRANG DÀNH RIÊNG CHO LECTURER =================
       {
-        path: "reports",
+        element: <RequireUser allowedRoles={["LECTURER"]} />,
         children: [
-          { index: true, element: <ProgressReportPage /> },
-          { path: "manage", element: <ReportManagementPage /> }, //student manage
-          { path: "editor", element: <ReportEditorPage /> }, //student edit
-          { path: "review/:reportId", element: <ReportReviewPage /> }, //lecturer review
+          // ----- SRS REVIEW -----
+          {
+            path: "srs/review/:id",
+            element: <SrsReviewPage />,
+          },
+          // ----- REPORT REVIEW -----
+          {
+            path: "reports/review/:reportId",
+            element: <ReportReviewPage />,
+          },
         ],
       },
     ],
