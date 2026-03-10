@@ -43,7 +43,6 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
         role: role,
       });
 
-      // If backend returns no token → account not registered
       if (!response.data?.accessToken) {
         const message = "This account is not registered";
         setError(message);
@@ -51,22 +50,30 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
         return;
       }
 
+      // 1. Chỉ lấy accessToken và refreshToken từ backend
       const { accessToken, refreshToken } = response.data;
 
-      // Save token to store
-      login(accessToken, refreshToken);
+      // 2. SỬ DỤNG ROLE TỪ THAM SỐ CỦA HÀM (do form truyền vào) thay vì đợi backend
+      const roleUpper = role.toUpperCase();
+
+      // 3. Lưu vào store
+      login(accessToken, refreshToken, {
+        systemRole: roleUpper,
+        email: "", // Tạm để rỗng vì backend không trả về
+        name: "User", // Tạm để mặc định vì backend không trả về
+      });
 
       toast.success("Login successful");
 
-      console.log("ROLE AFTER LOGIN:", role);
-
-      const userRole = role?.toLowerCase();
-
-      if (userRole === "admin") {
+      // 4. Điều hướng
+      if (roleUpper === "ADMIN") {
         navigate("/admin", { replace: true });
-      } else {
+      } else if (roleUpper === "LECTURER" || roleUpper === "STUDENT") {
         navigate("/dashboard", { replace: true });
+      } else {
+        toast.error("Role không hợp lệ!");
       }
+      // ... (giữ nguyên phần catch bên dưới) [cite: 54-57]
     } catch (err: any) {
       let message = "";
 
