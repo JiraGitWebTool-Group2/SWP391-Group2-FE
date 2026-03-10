@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { GoogleLogin } from "@react-oauth/google";
 import { useGoogleLogin } from "../hooks/useLogin";
@@ -8,12 +9,14 @@ const LoginForm = () => {
   const { handleGoogleSuccess, handleGoogleError, isLoading, error } =
     useGoogleLogin();
 
+  const [role, setRole] = useState("student");
+
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden  from-slate-50 via-blue-50 to-indigo-100 p-6">
       {/* Background lights */}
-      <div className="absolute w-[700px] h-[700px] bg-indigo-400 opacity-30 blur-[140px] rounded-full -top-40 -left-40 animate-pulse"></div>
-      <div className="absolute w-[600px] h-[600px] bg-blue-400 opacity-30 blur-[130px] rounded-full -bottom-40 -right-40 animate-pulse"></div>
-      <div className="absolute w-[400px] h-[400px] bg-purple-300 opacity-20 blur-[120px] rounded-full top-[25%] right-[15%]"></div>
+      <div className="absolute  bg-indigo-400 opacity-30 blur-[140px] rounded-full -top-40 -left-40 animate-pulse"></div>
+      <div className="absolute  bg-blue-400 opacity-30 blur-[130px] rounded-full -bottom-40 -right-40 animate-pulse"></div>
+      <div className="absolute  bg-purple-300 opacity-20 blur-[120px] rounded-full top-[25%] right-[15%]"></div>
 
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.96 }}
@@ -24,7 +27,7 @@ const LoginForm = () => {
           <CardContent className="p-16 space-y-12">
             {/* Header */}
             <div className="text-center space-y-5">
-              <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-5xl font-bold tracking-tight  from-indigo-600 via-blue-600 to-purple-600 bg-clip-text text-transparent">
                 SWP391 Portal
               </h1>
 
@@ -41,18 +44,35 @@ const LoginForm = () => {
                 animate={{ opacity: 1 }}
                 className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-start gap-2"
               >
-                <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <AlertCircle className="h-5 w-5 mt-0.5 " />
                 <span className="text-sm">{error}</span>
               </motion.div>
             )}
 
+            {/* Select Role */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                Select Role
+              </label>
+
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="admin">Admin</option>
+                <option value="lecturer">Lecturer</option>
+                <option value="student">Student</option>
+              </select>
+            </div>
+
             {/* Divider */}
             <div className="flex items-center gap-5">
-              <div className="flex-1 h-[1px] bg-gray-200"></div>
+              <div className="flex-1  bg-gray-200"></div>
               <span className="text-sm text-gray-500 font-medium">
                 Sign in with Google
               </span>
-              <div className="flex-1 h-[1px] bg-gray-200"></div>
+              <div className="flex-1 bg-gray-200"></div>
             </div>
 
             {/* Login Button */}
@@ -71,7 +91,9 @@ const LoginForm = () => {
                   className="p-2 rounded-xl shadow-md hover:shadow-lg transition"
                 >
                   <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
+                    onSuccess={(credentialResponse) =>
+                      handleGoogleSuccess(credentialResponse, role)
+                    }
                     onError={handleGoogleError}
                   />
                 </motion.div>

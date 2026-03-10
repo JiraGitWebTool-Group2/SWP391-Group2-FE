@@ -2,6 +2,7 @@ import { api } from "@/lib/axios";
 
 export interface GoogleLoginRequest {
   idToken: string;
+  role: string;
 }
 
 export interface GoogleLoginResponse {

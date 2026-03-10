@@ -1,36 +1,41 @@
 import { useState } from "react";
 import { createUser } from "../services";
+import { toast } from "sonner";
+import type { UserRole } from "../types";
 
 export default function CreateUserForm() {
   const [email, setEmail] = useState("");
-  // const [fullName, setFullName] = useState("");
-  // const [password, setPassword] = useState(""); // ✅ thêm password
+  const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState("STUDENT");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const toastId = toast.loading("Creating user...");
 
     try {
       setLoading(true);
 
       await createUser({
         email,
-        // fullName,
-        // password,
+        fullName,
+        password: "defaultpassword",
+        role: role as UserRole,
       });
 
-      alert("User created successfully ✅");
+      toast.success("User created successfully", { id: toastId });
 
       setEmail("");
-      // setFullName("");
-      // setPassword(""); // reset password
+      setFullName("");
+      setRole("STUDENT");
     } catch (error: any) {
       console.error(error);
 
       if (error.response?.data) {
-        alert(error.response.data);
+        toast.error(error.response.data, { id: toastId });
       } else {
-        alert("Create user failed ❌");
+        toast.error("Create user failed", { id: toastId });
       }
     } finally {
       setLoading(false);
@@ -54,7 +59,7 @@ export default function CreateUserForm() {
           />
         </div>
 
-        {/* Full Name
+        {/* Full Name */}
         <div>
           <label className="block mb-2 font-medium">Full Name</label>
           <input
@@ -66,18 +71,21 @@ export default function CreateUserForm() {
           />
         </div>
 
-        {/* Password */}
-        {/* <div>
-          <label className="block mb-2 font-medium">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
+        {/* Role */}
+        <div>
+          <label className="block mb-2 font-medium">Role</label>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div> */}
+          >
+            <option value="STUDENT">Student</option>
+            <option value="LECTURER">Lecturer</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
 
+        {/* Button */}
         <button
           type="submit"
           disabled={loading}

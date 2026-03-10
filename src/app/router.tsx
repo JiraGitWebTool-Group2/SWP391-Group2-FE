@@ -146,9 +146,9 @@ export const router = createBrowserRouter([
         path: "srs",
         children: [
           { index: true, element: <SrsGeneratePage /> },
-          { path: "manage", element: <SrsManagementPage /> },
-          { path: ":id", element: <SrsEditorPage /> },
-          { path: "review/:id", element: <SrsReviewPage /> },
+          { path: "manage", element: <SrsManagementPage /> }, //student manage
+          { path: ":id", element: <SrsEditorPage /> }, //student edit
+          { path: "review/:id", element: <SrsReviewPage /> }, //lecturer review
         ],
       },
 
@@ -157,9 +157,9 @@ export const router = createBrowserRouter([
         path: "reports",
         children: [
           { index: true, element: <ProgressReportPage /> },
-          { path: "manage", element: <ReportManagementPage /> },
-          { path: "editor", element: <ReportEditorPage /> },
-          { path: "review/:reportId", element: <ReportReviewPage /> },
+          { path: "manage", element: <ReportManagementPage /> }, //student manage
+          { path: "editor", element: <ReportEditorPage /> }, //student edit
+          { path: "review/:reportId", element: <ReportReviewPage /> }, //lecturer review
         ],
       },
     ],
