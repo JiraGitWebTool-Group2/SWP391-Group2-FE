@@ -8,6 +8,7 @@ import { toast } from "sonner";
 interface UseGoogleLoginReturn {
   handleGoogleSuccess: (
     credentialResponse: CredentialResponse,
+    role: string,
   ) => Promise<void>;
   handleGoogleError: () => void;
   isLoading: boolean;
@@ -23,6 +24,7 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
 
   const handleGoogleSuccess = async (
     credentialResponse: CredentialResponse,
+    role: string,
   ) => {
     try {
       setError(null);
@@ -38,6 +40,7 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
 
       const response = await authService.googleLogin({
         idToken: credentialResponse.credential,
+        role: role,
       });
 
       // If backend returns no token → account not registered

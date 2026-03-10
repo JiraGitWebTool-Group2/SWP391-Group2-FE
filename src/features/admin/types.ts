@@ -25,11 +25,12 @@ export interface CreateGroupRequest {
 }
 
 /* ================= USERS ================= */
-
+export type UserRole = "ADMIN" | "LECTURER" | "STUDENT";
 export interface CreateUserRequest {
   email: string;
-  // fullName: string;
+  fullName: string;
   // password: string;
+  role: UserRole;
 }
 
 export interface User {

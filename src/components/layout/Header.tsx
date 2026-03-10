@@ -23,6 +23,7 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogTrigger,
+  AlertDialogOverlay,
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 
@@ -113,7 +114,9 @@ function Header() {
               </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="rounded-xl">
+            <AlertDialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+
+            <AlertDialogContent className="rounded-xl bg-white dark:bg-slate-900 shadow-xl">
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
 

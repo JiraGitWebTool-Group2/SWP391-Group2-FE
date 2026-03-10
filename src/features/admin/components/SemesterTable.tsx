@@ -13,6 +13,10 @@ export default function SemesterTable({
   onDeleteSemester,
   onEditSemester,
 }: Props) {
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString("en-GB");
+  };
+
   return (
     <div className="bg-white border rounded shadow">
       <table className="w-full">
@@ -32,8 +36,8 @@ export default function SemesterTable({
             <tr key={s.semesterId} className="border-b hover:bg-gray-50">
               <td className="p-4 cursor-pointer">{s.code}</td>
               <td className="p-4 cursor-pointer">{s.name}</td>
-              <td className="p-4 cursor-pointer">{s.startDate}</td>
-              <td className="p-4 cursor-pointer">{s.endDate}</td>
+              <td className="p-4 cursor-pointer">{formatDate(s.startDate)}</td>
+              <td className="p-4 cursor-pointer">{formatDate(s.endDate)}</td>
               <td className="p-4 cursor-pointer">{s.status}</td>
 
               <td className="p-4 flex gap-3">
