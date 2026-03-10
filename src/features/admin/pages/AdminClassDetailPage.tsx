@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import {
@@ -12,6 +12,7 @@ import {
 } from "../services";
 
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 import type {
   AllLecturer,
@@ -22,6 +23,7 @@ import type {
 
 export default function AdminClassDetailPage() {
   const { classId } = useParams();
+  const navigate = useNavigate();
 
   const [classDetail, setClassDetail] = useState<ClassDetail | null>(null);
 
@@ -139,7 +141,15 @@ export default function AdminClassDetailPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-semibold mb-6">Class Detail</h1>
+      {/* HEADER */}
+
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+
+        <h1 className="text-2xl font-semibold">Class Detail</h1>
+      </div>
 
       {/* ERROR MESSAGE */}
 
