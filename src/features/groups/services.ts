@@ -1,0 +1,92 @@
+import { api } from "@/lib/axios";
+
+import type {
+  CreateGroupRequest,
+  CreateProjectRequest,
+  Group,
+  GroupStudent,
+  Project,
+} from "./types";
+
+/* ================= GROUPS ================= */
+
+export const getGroups = async (): Promise<Group[]> => {
+  const res = await api.get("/groups");
+  return res.data;
+};
+
+export const createGroup = async (
+  payload: CreateGroupRequest,
+): Promise<Group> => {
+  const res = await api.post("/groups", payload);
+  return res.data;
+};
+
+export const updateGroup = async (groupId: number, payload: any) => {
+  const res = await api.put(`/groups/${groupId}`, payload);
+  return res.data;
+};
+
+export const deleteGroup = async (groupId: number) => {
+  const res = await api.delete(`/groups/${groupId}`);
+  return res.data;
+};
+
+/* ================= PROJECT ================= */
+
+export const getProjectsByGroup = async (
+  groupId: number,
+): Promise<Project[]> => {
+  const res = await api.get(`/groups/${groupId}/projects`);
+  return res.data;
+};
+
+export const createProjectInGroup = async (
+  groupId: number,
+  payload: CreateProjectRequest,
+): Promise<Project> => {
+  const res = await api.post(`/groups/${groupId}/projects`, payload);
+  return res.data;
+};
+
+/* ================= CLASSES ================= */
+
+export const getClasses = async () => {
+  const res = await api.get("/classes");
+  return res.data;
+};
+
+/* ================= STUDENTS ================= */
+
+export const getStudentsOfGroup = async (
+  groupId: number,
+): Promise<GroupStudent[]> => {
+  const res = await api.get(`/groups/${groupId}/students`);
+  return res.data;
+};
+
+export const addStudentToGroup = async (
+  groupId: number,
+  userId: number,
+  roleId: number,
+) => {
+  const res = await api.post(`/groups/${groupId}/students`, {
+    userId,
+    roleId,
+  });
+
+  return res.data;
+};
+
+export const removeStudentFromGroup = async (
+  groupId: number,
+  studentId: number,
+) => {
+  const res = await api.delete(`/groups/${groupId}/students/${studentId}`);
+  return res.data;
+};
+
+export const getStudentsOfClass = async (classId: number) => {
+  const res = await api.get(`/classes/${classId}/students`);
+  return res.data;
+};

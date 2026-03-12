@@ -2,15 +2,10 @@ import { api } from "@/lib/axios";
 import type {
   AddStudentsBulkRequest,
   ClassDetail,
-  ClassResponse,
-  CreateClassRequest,
-  CreateGroupRequest,
   CreateOrUpdateRepositoryRequest,
   CreateProjectRequest,
   CreateUserRequest,
-  Group,
   IntegrationConfigRequest,
-  Project,
   RepositoryResponse,
   Semester,
 } from "./types";
@@ -36,18 +31,6 @@ export const createUser = async (data: CreateUserRequest) => {
 };
 
 /* ================= GROUPS ================= */
-
-export const getGroups = async (): Promise<Group[]> => {
-  const res = await api.get("/groups");
-  return res.data;
-};
-
-export const createGroup = async (
-  payload: CreateGroupRequest,
-): Promise<Group> => {
-  const res = await api.post("/groups", payload);
-  return res.data;
-};
 
 /* ================= INTEGRATIONS ================= */
 
@@ -100,37 +83,37 @@ export const getSnapshotsByGroup = async (groupId: number) => {
  * GET /api/groups/{groupId}/projects
  * Lấy danh sách project theo group
  */
-export const getProjectsByGroup = async (
-  groupId: number,
-): Promise<Project[]> => {
-  const res = await api.get(`/groups/${groupId}/projects`);
-  return res.data;
-};
+// export const getProjectsByGroup = async (
+//   groupId: number,
+// ): Promise<Project[]> => {
+//   const res = await api.get(`/groups/${groupId}/projects`);
+//   return res.data;
+// };
 
 /**
  * POST /api/groups/{groupId}/projects
  * Tạo project trong group
  */
-export const createProjectInGroup = async (
-  groupId: number,
-  payload: CreateProjectRequest,
-): Promise<Project> => {
-  const res = await api.post(`/groups/${groupId}/projects`, payload);
-  return res.data;
-};
+// export const createProjectInGroup = async (
+//   groupId: number,
+//   payload: CreateProjectRequest,
+// ): Promise<Project> => {
+//   const res = await api.post(`/groups/${groupId}/projects`, payload);
+//   return res.data;
+// };
 
 /**
  * GET /api/projects/{projectId}
  * Lấy project theo id (optional)
  */
-export const getProjectById = async (
-  projectId?: number,
-): Promise<Project | null> => {
-  if (!projectId) return null;
+// export const getProjectById = async (
+//   projectId?: number,
+// ): Promise<Project | null> => {
+//   if (!projectId) return null;
 
-  const res = await api.get(`/projects/${projectId}`);
-  return res.data;
-};
+//   const res = await api.get(`/projects/${projectId}`);
+//   return res.data;
+// };
 
 /* ================= SEMESTERS ================= */
 
@@ -185,6 +168,11 @@ export const updateClass = async (classId: number, data: any) => {
 
 export const deleteClass = async (classId: number) => {
   const res = await api.delete(`/classes/${classId}`);
+  return res.data;
+};
+
+export const getGroupsByClass = async (classId: number) => {
+  const res = await api.get(`/classes/${classId}/groups`);
   return res.data;
 };
 

@@ -119,7 +119,7 @@ export default function SyncResultPage() {
           </div>
 
           <div className="bg-slate-100 dark:bg-slate-800 rounded-xl p-4 text-sm whitespace-pre-wrap">
-            {data.notes}
+            {data.notes ?? "No notes"}
           </div>
 
           {/* View Snapshot Button */}

@@ -32,9 +32,7 @@ export default function SyncForm({ onSubmit }: Props) {
 
   const handleSubmit = async () => {
     if (!includeJira && !includeGithub) {
-      toast.error("Thiếu nguồn dữ liệu", {
-        description: "Vui lòng chọn ít nhất một nguồn.",
-      });
+      toast.error("Thiếu nguồn dữ liệu");
       return;
     }
 
@@ -70,6 +68,7 @@ export default function SyncForm({ onSubmit }: Props) {
       </CardHeader>
 
       <CardContent className="space-y-8">
+        {/* Sources */}
         <div className="space-y-4">
           <h3 className="text-sm font-semibold">Data Sources</h3>
 
@@ -85,6 +84,7 @@ export default function SyncForm({ onSubmit }: Props) {
               {includeJira && (
                 <CheckCircle2 className="absolute top-3 right-3 h-5 w-5 text-primary" />
               )}
+
               <div className="flex items-center gap-3">
                 <GitBranch className="h-5 w-5 text-primary" />
                 <div>
@@ -107,6 +107,7 @@ export default function SyncForm({ onSubmit }: Props) {
               {includeGithub && (
                 <CheckCircle2 className="absolute top-3 right-3 h-5 w-5 text-primary" />
               )}
+
               <div className="flex items-center gap-3">
                 <Github className="h-5 w-5 text-primary" />
                 <div>
@@ -122,6 +123,7 @@ export default function SyncForm({ onSubmit }: Props) {
 
         <Separator />
 
+        {/* Scope */}
         <div className="space-y-4">
           <h3 className="text-sm font-semibold">Scope</h3>
 
@@ -132,9 +134,10 @@ export default function SyncForm({ onSubmit }: Props) {
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
+
             <SelectContent>
               <SelectItem value="BACKLOG">Full Project</SelectItem>
-              <SelectItem value="SPRINT">Sprint cụ thể</SelectItem>
+              <SelectItem value="SPRINT">Sprint</SelectItem>
               <SelectItem value="CUSTOM">Custom</SelectItem>
             </SelectContent>
           </Select>
