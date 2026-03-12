@@ -10,6 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { GitBranch } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface Props {
   projectId: number;
@@ -56,10 +64,8 @@ export default function RepositoryForm({
     try {
       if (mode === "create") {
         await createRepository(projectId, formData);
-
         toast.success("Repository created successfully 🎉");
 
-        // Reset form sau khi tạo thành công
         setFormData({
           repoName: "",
           repoUrl: "",
@@ -69,7 +75,6 @@ export default function RepositoryForm({
         if (!repository) return;
 
         await updateRepository(projectId, repository.id, formData);
-
         toast.success("Repository updated successfully 🎉");
       }
 
@@ -87,48 +92,70 @@ export default function RepositoryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Repository Name */}
-      <div className="space-y-2">
-        <Label>Repository Name</Label>
-        <Input
-          name="repoName"
-          value={formData.repoName}
-          onChange={handleChange}
-          required
-        />
-      </div>
+    <Card className="max-w-2xl mx-auto mt-6 shadow-sm">
+      <CardHeader className="flex flex-row items-center gap-3">
+        <GitBranch className="w-5 h-5 text-muted-foreground" />
 
-      {/* Repository URL */}
-      <div className="space-y-2">
-        <Label>Repository URL</Label>
-        <Input
-          name="repoUrl"
-          value={formData.repoUrl}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div>
+          <CardTitle>
+            {mode === "create" ? "Create Repository" : "Update Repository"}
+          </CardTitle>
 
-      {/* Default Branch */}
-      <div className="space-y-2">
-        <Label>Default Branch</Label>
-        <Input
-          name="defaultBranch"
-          value={formData.defaultBranch}
-          onChange={handleChange}
-          required
-        />
-      </div>
+          <CardDescription>
+            Connect your Git repository to this project
+          </CardDescription>
+        </div>
+      </CardHeader>
 
-      {/* Submit Button */}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading
-          ? "Processing..."
-          : mode === "create"
-            ? "Create Repository"
-            : "Update Repository"}
-      </Button>
-    </form>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label>Repository Name</Label>
+            <Input
+              name="repoName"
+              value={formData.repoName}
+              onChange={handleChange}
+              placeholder="example-repository"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Repository URL</Label>
+            <Input
+              name="repoUrl"
+              value={formData.repoUrl}
+              onChange={handleChange}
+              placeholder="https://github.com/your-org/repository"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Default Branch</Label>
+            <Input
+              name="defaultBranch"
+              value={formData.defaultBranch}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4">
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+
+            <Button type="submit" disabled={loading}>
+              {loading
+                ? "Processing..."
+                : mode === "create"
+                  ? "Create Repository"
+                  : "Update Repository"}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

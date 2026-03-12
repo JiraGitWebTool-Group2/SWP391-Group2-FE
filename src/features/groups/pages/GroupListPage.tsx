@@ -36,15 +36,11 @@ export default function GroupListPage() {
   const [classes, setClasses] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  /* ================= CREATE GROUP ================= */
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [selectedClassId, setSelectedClassId] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-
-  /* ================= EDIT GROUP ================= */
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<Group | null>(null);
@@ -52,8 +48,6 @@ export default function GroupListPage() {
   const [editGroupName, setEditGroupName] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editClassId, setEditClassId] = useState("");
-
-  /* ================= LOAD DATA ================= */
 
   const fetchGroups = async () => {
     try {
@@ -78,12 +72,8 @@ export default function GroupListPage() {
 
   useEffect(() => {
     fetchGroups();
-    if (isLecturer) {
-      fetchClasses();
-    }
+    if (isLecturer) fetchClasses();
   }, [isLecturer]);
-
-  /* ================= CREATE ================= */
 
   const handleCreateSubmit = async () => {
     if (!newGroupName || !selectedClassId) {
@@ -106,14 +96,12 @@ export default function GroupListPage() {
       setIsDialogOpen(false);
 
       fetchGroups();
-    } catch (err) {
+    } catch {
       alert("Create group failed");
     } finally {
       setIsCreating(false);
     }
   };
-
-  /* ================= EDIT ================= */
 
   const openEditDialog = (group: Group) => {
     setEditingGroup(group);
@@ -142,7 +130,6 @@ export default function GroupListPage() {
 
   const handleDeleteGroup = async () => {
     if (!editingGroup) return;
-
     if (!confirm("Delete this group?")) return;
 
     try {
@@ -154,14 +141,19 @@ export default function GroupListPage() {
     }
   };
 
-  /* ================= UI ================= */
-
   return (
     <div className="min-h-screen p-10 space-y-10 bg-gradient-to-br from-orange-50 via-rose-50 to-violet-50">
       {/* HEADER */}
 
       <div className="flex justify-between items-center">
-        <h1 className="text-4xl font-bold text-blue-600">Groups Management</h1>
+        <div>
+          <h1 className="text-4xl font-bold text-blue-600">
+            Groups Management
+          </h1>
+          <p className="text-muted-foreground">
+            Manage student groups and projects
+          </p>
+        </div>
 
         {isLecturer && (
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -232,21 +224,21 @@ export default function GroupListPage() {
           <p>No groups</p>
         ) : (
           groups.map((group) => (
-            <Card key={group.groupId}>
-              <CardHeader className="flex justify-between items-center flex-row">
+            <Card key={group.groupId} className="hover:shadow-md transition">
+              <CardHeader className="flex flex-row justify-between items-center">
                 <CardTitle>{group.groupName}</CardTitle>
-                <Badge>Active</Badge>
+                <Badge variant="secondary">Active</Badge>
               </CardHeader>
 
               <CardContent className="space-y-2 text-sm">
-                <p className="text-blue-600 font-semibold">
+                <p className="font-semibold text-blue-600">
                   Class: {group.className || group.classId || "None"}
                 </p>
 
                 <p>Description: {group.description || "--"}</p>
 
                 {group.createdAt && (
-                  <p>
+                  <p className="text-muted-foreground">
                     Created:{" "}
                     {new Date(group.createdAt).toLocaleDateString("vi-VN")}
                   </p>
@@ -276,7 +268,7 @@ export default function GroupListPage() {
       {/* EDIT GROUP */}
 
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="bg-white">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Group</DialogTitle>
           </DialogHeader>

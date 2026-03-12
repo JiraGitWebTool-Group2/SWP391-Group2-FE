@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 import { getLecturerById, getClassesOfLecturer } from "../services";
 
@@ -36,34 +39,38 @@ export default function LecturerDetailPage() {
     );
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
-      {/* HEADER WITH BACK BUTTON */}
-
-      <div className="flex items-center gap-4 mb-6">
+    <div className="p-8 max-w-4xl mx-auto space-y-6">
+      {/* HEADER */}
+      <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
 
-        <h1 className="text-2xl font-semibold">Lecturer Detail</h1>
+        <div>
+          <h1 className="text-2xl font-semibold">Lecturer Detail</h1>
+          <p className="text-sm text-muted-foreground">
+            View lecturer information and assigned classes
+          </p>
+        </div>
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.35 }}
       >
-        <Card className="shadow-lg border rounded-2xl">
-          <CardContent className="p-8 space-y-6">
-            {/* HEADER */}
+        <Card className="shadow-sm border rounded-xl">
+          <CardContent className="p-8 space-y-8">
+            {/* PROFILE */}
             <div className="flex items-center gap-4">
               <div>
-                <h1 className="text-2xl font-bold">{lecturer.fullName}</h1>
+                <h2 className="text-xl font-semibold">{lecturer.fullName}</h2>
                 <p className="text-muted-foreground">{lecturer.email}</p>
               </div>
             </div>
 
-            {/* INFO */}
-            <div className="grid grid-cols-2 gap-6 pt-4 border-t">
+            {/* INFO GRID */}
+            <div className="grid grid-cols-2 gap-6 border-t pt-6">
               <div>
                 <p className="text-sm text-muted-foreground">Full Name</p>
                 <p className="font-medium">{lecturer.fullName}</p>
@@ -78,30 +85,33 @@ export default function LecturerDetailPage() {
                 <p className="text-sm text-muted-foreground">
                   Assigned Classes
                 </p>
-                <p className="font-semibold text-lg">{classes.length}</p>
+
+                <Badge variant="secondary" className="mt-1 text-sm">
+                  {classes.length} classes
+                </Badge>
               </div>
             </div>
 
             {/* CLASS LIST */}
-            <div className="pt-4 border-t">
-              <h2 className="font-semibold mb-3">Assigned Classes</h2>
+            <div className="border-t pt-6">
+              <h2 className="font-semibold mb-4">Assigned Classes</h2>
 
               {classes.length === 0 ? (
                 <p className="text-muted-foreground">No classes assigned</p>
               ) : (
-                <ul className="grid gap-2">
+                <div className="grid sm:grid-cols-2 gap-3">
                   {classes.map((c, index) => (
-                    <motion.li
+                    <motion.div
                       key={c.classId}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="px-4 py-2 rounded-lg border hover:bg-muted transition cursor-default"
+                      className="border rounded-lg px-4 py-3 hover:bg-muted transition"
                     >
-                      {c.classCode}
-                    </motion.li>
+                      <p className="font-medium">{c.classCode}</p>
+                    </motion.div>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           </CardContent>

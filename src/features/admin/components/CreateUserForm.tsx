@@ -20,7 +20,7 @@ export default function CreateUserForm() {
       await createUser({
         email,
         fullName,
-        password: "defaultpassword",
+        // password: "defaultpassword",
         role: role as UserRole,
       });
 

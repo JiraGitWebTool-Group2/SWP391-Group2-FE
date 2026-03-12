@@ -20,8 +20,6 @@ import type {
   StudentOfClass,
 } from "../types";
 
-/* ================= GROUP TYPE ================= */
-
 export default function AdminClassDetailPage() {
   const { classId } = useParams();
   const navigate = useNavigate();
@@ -39,15 +37,12 @@ export default function AdminClassDetailPage() {
   const loadClass = async () => {
     try {
       if (!classId) return;
-
       const data = await getClassById(Number(classId));
       setClassDetail(data);
     } catch {
       setError("Cannot load class information.");
     }
   };
-
-  /* ================= LOAD LECTURERS ================= */
 
   const loadLecturers = async () => {
     try {
@@ -65,8 +60,6 @@ export default function AdminClassDetailPage() {
       setError("Cannot load lecturers.");
     }
   };
-
-  /* ================= LOAD STUDENTS ================= */
 
   const loadStudents = async () => {
     try {
@@ -91,8 +84,6 @@ export default function AdminClassDetailPage() {
     }
   };
 
-  /* ================= LOAD GROUPS ================= */
-
   const loadGroups = async () => {
     try {
       if (!classId) return;
@@ -109,8 +100,6 @@ export default function AdminClassDetailPage() {
       setError("Cannot load groups.");
     }
   };
-
-  /* ================= ADD STUDENT ================= */
 
   const handleAddStudent = async () => {
     try {
@@ -135,8 +124,6 @@ export default function AdminClassDetailPage() {
     }
   };
 
-  /* ================= REMOVE STUDENT ================= */
-
   const handleRemoveStudent = async (studentId: number) => {
     try {
       if (!classId) return;
@@ -144,14 +131,11 @@ export default function AdminClassDetailPage() {
       await removeStudentFromClass(Number(classId), studentId);
 
       await loadStudents();
-
       setError(null);
     } catch {
       setError("Cannot remove student.");
     }
   };
-
-  /* ================= INIT ================= */
 
   useEffect(() => {
     loadClass();
@@ -163,10 +147,10 @@ export default function AdminClassDetailPage() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-6xl mx-auto space-y-8">
       {/* HEADER */}
 
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
@@ -177,34 +161,34 @@ export default function AdminClassDetailPage() {
       {/* ERROR */}
 
       {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>
+        <div className="p-3 bg-red-100 text-red-700 rounded-md">{error}</div>
       )}
 
       {/* ================= CLASS INFO ================= */}
 
       {classDetail && (
-        <div className="mb-8 bg-white border rounded p-4 shadow">
-          <h2 className="font-semibold mb-4">Class Information</h2>
+        <div className="bg-white border rounded-xl shadow-sm p-6">
+          <h2 className="font-semibold text-lg mb-4">Class Information</h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 text-sm">
             <p>
               <b>Class Name:</b> {classDetail.className}
             </p>
-
             <p>
               <b>Class Code:</b> {classDetail.classCode}
             </p>
-
             <p>
               <b>Course:</b> {classDetail.courseCode}
             </p>
-
             <p>
               <b>Semester:</b> {classDetail.semesterName}
             </p>
 
             <p>
-              <b>Status:</b> {classDetail.status}
+              <b>Status:</b>
+              <span className="ml-2 px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
+                {classDetail.status}
+              </span>
             </p>
           </div>
         </div>
@@ -212,17 +196,17 @@ export default function AdminClassDetailPage() {
 
       {/* ================= LECTURERS ================= */}
 
-      <div className="mb-8 bg-white border rounded p-4 shadow">
-        <h2 className="font-semibold mb-4">Lecturers</h2>
+      <div className="bg-white border rounded-xl shadow-sm p-6">
+        <h2 className="font-semibold text-lg mb-4">Lecturers</h2>
 
         {lecturers.length === 0 && (
-          <p className="text-gray-500">No lecturers</p>
+          <p className="text-gray-500 text-sm">No lecturers</p>
         )}
 
         {lecturers.map((l, index) => (
           <div
             key={`${l.lecturerId}-${index}`}
-            className="flex justify-between items-center border-t py-3"
+            className="flex justify-between items-center border-t py-3 first:border-none"
           >
             <div>
               <p className="font-medium">{l.lecturerName}</p>
@@ -234,22 +218,22 @@ export default function AdminClassDetailPage() {
 
       {/* ================= GROUPS ================= */}
 
-      <div className="mb-8 bg-white border rounded p-4 shadow">
-        <h2 className="font-semibold mb-4">Groups</h2>
+      <div className="bg-white border rounded-xl shadow-sm p-6">
+        <h2 className="font-semibold text-lg mb-4">Groups</h2>
 
-        <table className="w-full">
-          <thead className="border-b">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="text-left p-2">Group Name</th>
-              <th className="text-left p-2">Project</th>
-              <th className="text-left p-2">Actions</th>
+              <th className="text-left p-3">Group Name</th>
+              <th className="text-left p-3">Project</th>
+              <th className="text-left p-3">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {groups.length === 0 && (
               <tr>
-                <td colSpan={3} className="p-3 text-gray-500 text-center">
+                <td colSpan={3} className="p-4 text-center text-gray-500">
                   No groups
                 </td>
               </tr>
@@ -257,7 +241,7 @@ export default function AdminClassDetailPage() {
 
             {groups.map((g, index) => (
               <tr key={`${g.groupId}-${index}`} className="border-t">
-                <td className="p-3">{g.groupName}</td>
+                <td className="p-3 font-medium">{g.groupName}</td>
 
                 <td className="p-3">{g.projectName ?? "-"}</td>
 
@@ -295,16 +279,17 @@ export default function AdminClassDetailPage() {
 
       {/* ================= STUDENTS ================= */}
 
-      <div className="bg-white border rounded shadow">
-        <div className="p-4 border-b font-semibold flex justify-between">
-          Students
+      <div className="bg-white border rounded-xl shadow-sm">
+        <div className="p-4 border-b flex justify-between items-center">
+          <h2 className="font-semibold text-lg">Students</h2>
+
           <Button size="sm" onClick={handleAddStudent}>
             Add Student
           </Button>
         </div>
 
-        <table className="w-full">
-          <thead className="bg-gray-50">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b">
             <tr>
               <th className="p-3 text-left">Name</th>
               <th className="p-3 text-left">Email</th>
@@ -316,7 +301,7 @@ export default function AdminClassDetailPage() {
           <tbody>
             {students.length === 0 && (
               <tr>
-                <td colSpan={4} className="p-3 text-gray-500 text-center">
+                <td colSpan={4} className="p-4 text-center text-gray-500">
                   No students
                 </td>
               </tr>
@@ -324,7 +309,7 @@ export default function AdminClassDetailPage() {
 
             {students.map((s, index) => (
               <tr key={`${s.studentId}-${index}`} className="border-t">
-                <td className="p-3">{s.studentName}</td>
+                <td className="p-3 font-medium">{s.studentName}</td>
 
                 <td className="p-3">{s.studentEmail}</td>
 
@@ -333,7 +318,7 @@ export default function AdminClassDetailPage() {
                 <td className="p-3 text-right">
                   <Button
                     size="sm"
-                    className="bg-red-500 text-white hover:bg-red-600"
+                    variant="destructive"
                     onClick={() => handleRemoveStudent(s.studentId)}
                   >
                     Remove

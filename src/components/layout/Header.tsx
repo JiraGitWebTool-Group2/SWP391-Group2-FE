@@ -7,7 +7,7 @@ import {
 } from "../ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "../ui/mode-toggle";
-import { User, LayoutDashboard } from "lucide-react";
+import { User, LayoutDashboard, LogOut } from "lucide-react";
 import { useAuthStore } from "@/stores/auth.store";
 import { authService } from "@/features/auth/services";
 import { useProjectStore } from "@/stores/project.store";
@@ -23,8 +23,8 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogTrigger,
-  AlertDialogOverlay,
 } from "../ui/alert-dialog";
+
 import { Button } from "../ui/button";
 
 function Header() {
@@ -34,7 +34,6 @@ function Header() {
   const logout = useAuthStore((state) => state.logout);
   const refreshToken = useAuthStore((state) => state.refreshToken);
 
-  const currentProject = useProjectStore((state) => state.currentProject);
   const clearProject = useProjectStore((state) => state.clearProject);
 
   const navItems = [
@@ -64,14 +63,16 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 border-b bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm">
       <nav className="max-w-7xl mx-auto flex h-16 items-center justify-between px-8">
+        {/* LOGO */}
         <Link
           to="/dashboard"
-          className="flex items-center gap-2 text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
+          className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"
         >
           <LayoutDashboard size={22} />
           SWP391 Tracker
         </Link>
 
+        {/* NAVIGATION */}
         <div className="flex items-center gap-8">
           <NavigationMenu>
             {navItems.map((item) => {
@@ -84,9 +85,10 @@ function Header() {
                       to={item.path}
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "px-4 py-2 text-sm rounded-xl transition",
+                        "px-4 py-2 rounded-xl text-sm transition-all",
+                        "hover:bg-slate-100 dark:hover:bg-slate-800",
                         isActive &&
-                          "text-blue-600 bg-blue-50 dark:bg-slate-800",
+                          "text-blue-600 bg-blue-50 dark:bg-slate-800 font-medium",
                       )}
                     >
                       {item.name}
@@ -97,17 +99,20 @@ function Header() {
             })}
           </NavigationMenu>
 
-          {/* Logout Button + Dialog */}
+          {/* LOGOUT */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+              >
+                <LogOut size={16} />
                 Logout
               </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogOverlay className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
-
-            <AlertDialogContent className="rounded-xl bg-white dark:bg-slate-900 shadow-xl">
+            <AlertDialogContent className="rounded-xl">
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
 
@@ -130,12 +135,20 @@ function Header() {
             </AlertDialogContent>
           </AlertDialog>
 
+          {/* DIVIDER */}
           <div className="h-6 w-px bg-slate-200 dark:bg-slate-700" />
 
+          {/* PROFILE + THEME */}
           <div className="flex items-center gap-4">
             <Link
               to="/profile"
-              className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white"
+              className="
+              flex items-center justify-center
+              w-9 h-9 rounded-full
+              bg-gradient-to-r from-blue-500 to-indigo-500
+              text-white shadow-sm
+              hover:scale-105 transition
+              "
             >
               <User size={18} />
             </Link>

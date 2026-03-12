@@ -15,27 +15,48 @@ export default function ClassTable({
   onEdit,
   onView,
 }: Props) {
-  /* ================= LECTURER MAP ================= */
-
   const lecturerMap: Record<number, string> = Object.fromEntries(
     lecturers.map((l) => [l.lecturerId, l.fullName]),
   );
 
-  /* ================= UI ================= */
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "ACTIVE":
+        return "bg-green-100 text-green-700";
+      case "PLANNING":
+        return "bg-blue-100 text-blue-700";
+      case "INACTIVE":
+        return "bg-gray-100 text-gray-600";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
 
   return (
-    <div className="bg-white border rounded-lg shadow overflow-x-auto">
+    <div className="bg-white border rounded-xl shadow-sm overflow-x-auto">
       <table className="w-full text-sm">
         {/* HEADER */}
 
-        <thead className="border-b bg-gray-50">
+        <thead className="border-b bg-slate-50">
           <tr>
-            <th className="text-left p-4 font-semibold">Class</th>
-            <th className="text-left p-4 font-semibold">Course Code</th>
-            <th className="text-left p-4 font-semibold">Lecturer</th>
-            <th className="text-left p-4 font-semibold">Status</th>
-            <th className="text-left p-4 font-semibold">Actions</th>
-            <th className="text-left p-4 font-semibold">View Detail</th>
+            <th className="text-left px-6 py-3 font-semibold text-slate-600">
+              Class
+            </th>
+            <th className="text-left px-6 py-3 font-semibold text-slate-600">
+              Course Code
+            </th>
+            <th className="text-left px-6 py-3 font-semibold text-slate-600">
+              Lecturer
+            </th>
+            <th className="text-left px-6 py-3 font-semibold text-slate-600">
+              Status
+            </th>
+            <th className="text-left px-6 py-3 font-semibold text-slate-600">
+              Actions
+            </th>
+            <th className="text-left px-6 py-3 font-semibold text-slate-600">
+              View Detail
+            </th>
           </tr>
         </thead>
 
@@ -51,21 +72,23 @@ export default function ClassTable({
             return (
               <tr
                 key={c.classId}
-                className="border-b hover:bg-gray-50 transition"
+                className="border-b hover:bg-slate-50 transition"
               >
-                {/* CLASS NAME */}
+                {/* CLASS */}
 
-                <td className="p-4 font-medium">{c.className}</td>
+                <td className="px-6 py-4 font-medium text-slate-800">
+                  {c.className}
+                </td>
 
                 {/* COURSE CODE */}
 
-                <td className="p-4 text-gray-600">{c.courseCode}</td>
+                <td className="px-6 py-4 text-slate-600">{c.courseCode}</td>
 
                 {/* LECTURER */}
 
-                <td className="p-4">
+                <td className="px-6 py-4">
                   {lecturerName ? (
-                    <span>{lecturerName}</span>
+                    <span className="text-slate-700">{lecturerName}</span>
                   ) : (
                     <span className="text-gray-400 italic">Not Assigned</span>
                   )}
@@ -73,26 +96,30 @@ export default function ClassTable({
 
                 {/* STATUS */}
 
-                <td className="p-4">
-                  <span className="px-2 py-1 rounded bg-gray-100 text-sm">
+                <td className="px-6 py-4">
+                  <span
+                    className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusStyle(
+                      c.status || "",
+                    )}`}
+                  >
                     {c.status}
                   </span>
                 </td>
 
                 {/* ACTIONS */}
 
-                <td className="p-4">
+                <td className="px-6 py-4">
                   <div className="flex gap-4">
                     <button
                       onClick={() => onEdit(c)}
-                      className="text-blue-600 hover:underline"
+                      className="text-blue-600 hover:text-blue-800 font-medium"
                     >
                       Edit
                     </button>
 
                     <button
                       onClick={() => onDelete(c.classId)}
-                      className="text-red-600 hover:underline"
+                      className="text-red-600 hover:text-red-800 font-medium"
                     >
                       Delete
                     </button>
@@ -101,10 +128,10 @@ export default function ClassTable({
 
                 {/* VIEW DETAIL */}
 
-                <td className="p-4">
+                <td className="px-6 py-4">
                   <button
                     onClick={() => onView(c.classId)}
-                    className="text-green-600 hover:underline"
+                    className="text-green-600 hover:text-green-800 font-medium"
                   >
                     View Detail
                   </button>
@@ -113,9 +140,11 @@ export default function ClassTable({
             );
           })}
 
+          {/* EMPTY */}
+
           {classes.length === 0 && (
             <tr>
-              <td colSpan={6} className="text-center p-6 text-gray-500">
+              <td colSpan={6} className="text-center py-10 text-gray-500">
                 No classes found
               </td>
             </tr>

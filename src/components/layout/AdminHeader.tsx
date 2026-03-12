@@ -1,4 +1,16 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { LogOut, LayoutDashboard, Users, BookOpen } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogFooter,
+  AlertDialogHeader,
+} from "@/components/ui/alert-dialog";
 
 export default function AdminHeader() {
   const navigate = useNavigate();
@@ -15,14 +27,16 @@ export default function AdminHeader() {
         ? location.pathname === "/admin"
         : location.pathname.startsWith(path);
 
-    return `hover:text-blue-600 transition ${
-      isActive ? "text-blue-600 font-semibold" : "text-gray-600"
+    return `flex items-center gap-2 px-3 py-2 rounded-lg transition ${
+      isActive
+        ? "bg-blue-50 text-blue-600 font-semibold"
+        : "text-gray-600 hover:bg-gray-100"
     }`;
   };
 
   return (
-    <header className="h-16 border-b bg-white px-8 flex items-center justify-between shadow-sm">
-      {/* Logo */}
+    <header className="h-16 border-b bg-white px-10 flex items-center justify-between shadow-sm">
+      {/* LOGO */}
       <div
         className="font-bold text-lg text-gray-800 cursor-pointer"
         onClick={() => navigate("/admin")}
@@ -30,43 +44,59 @@ export default function AdminHeader() {
         Admin Panel
       </div>
 
-      {/* Navigation */}
-      <nav className="flex items-center gap-8 text-sm font-medium">
+      {/* NAV */}
+      <nav className="flex items-center gap-4 text-sm">
         <Link to="/admin" className={navClass("/admin")}>
+          <LayoutDashboard size={16} />
           Dashboard
         </Link>
 
         <Link to="/admin/semesters" className={navClass("/admin/semesters")}>
+          <BookOpen size={16} />
           Semesters
         </Link>
 
-        {/* <Link to="/admin/classes" className={navClass("/admin/classes")}>
-          Classes
-        </Link> */}
-
         <Link to="/admin/lecturers" className={navClass("/admin/lecturers")}>
+          <Users size={16} />
           Lecturers
         </Link>
 
         <Link to="/admin/users" className={navClass("/admin/users")}>
+          <Users size={16} />
           Users
-        </Link>
-
-        <Link
-          to="/admin/integrations"
-          className={navClass("/admin/integrations")}
-        >
-          Integrations
         </Link>
       </nav>
 
-      {/* Logout */}
-      <button
-        onClick={handleLogout}
-        className="text-sm text-red-500 hover:underline"
-      >
-        Logout
-      </button>
+      {/* LOGOUT */}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button className="flex items-center gap-2 text-sm text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition">
+            <LogOut size={16} />
+            Logout
+          </button>
+        </AlertDialogTrigger>
+
+        <AlertDialogContent className="bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Logout</AlertDialogTitle>
+
+            <AlertDialogDescription>
+              Are you sure you want to logout from the admin panel?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+            <AlertDialogAction
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Logout
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   );
 }

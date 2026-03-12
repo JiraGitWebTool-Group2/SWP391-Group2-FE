@@ -6,6 +6,8 @@ import {
   getSnapshotRepoSummary,
 } from "../services";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 export default function SnapshotDetailPage() {
   const { snapshotId } = useParams();
 
@@ -38,43 +40,85 @@ export default function SnapshotDetailPage() {
   }, [snapshotId]);
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Snapshot Detail</h1>
+    <div className="min-h-screen bg-slate-50 p-10">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <h1 className="text-3xl font-bold">Snapshot #{snapshotId}</h1>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Commits</h2>
+        {/* REPO SUMMARY */}
 
-        {commits.map((c) => (
-          <div key={c.commitId} className="border p-3 rounded mb-2">
-            <div className="font-medium">{c.author}</div>
-            <div className="text-sm text-gray-600">{c.message}</div>
-            <div className="text-xs text-gray-400">
-              {new Date(c.committedAt).toLocaleString()}
-            </div>
-            <div className="text-xs">
-              +{c.additions ?? 0} / -{c.deletions ?? 0}
-            </div>
-          </div>
-        ))}
-      </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Repository Summary</CardTitle>
+          </CardHeader>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Repo Summary</h2>
-        {repos.map((r) => (
-          <div key={r.repoId}>
-            {r.repoName}: {r.totalCommits}
-          </div>
-        ))}
-      </section>
+          <CardContent className="space-y-2">
+            {repos.map((r) => (
+              <div
+                key={r.repoId}
+                className="flex justify-between items-center bg-slate-100 rounded-lg p-3"
+              >
+                <span className="font-medium">{r.repoName}</span>
+                <span className="text-sm text-muted-foreground">
+                  {r.totalCommits} commits
+                </span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Daily Summary</h2>
-        {daily.map((d) => (
-          <div key={d.date}>
-            {d.date}: {d.totalCommits}
-          </div>
-        ))}
-      </section>
+        {/* COMMITS */}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Commits</CardTitle>
+          </CardHeader>
+
+          <CardContent className="space-y-3">
+            {commits.map((c) => (
+              <div
+                key={c.commitId}
+                className="border rounded-xl p-4 bg-white shadow-sm"
+              >
+                <div className="flex justify-between mb-1">
+                  <span className="font-medium">{c.author}</span>
+
+                  <span className="text-xs text-gray-400">
+                    {new Date(c.committedAt).toLocaleString()}
+                  </span>
+                </div>
+
+                <div className="text-sm text-gray-600 mb-2">{c.message}</div>
+
+                <div className="text-xs text-gray-500">
+                  +{c.additions ?? 0} / -{c.deletions ?? 0}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* DAILY SUMMARY */}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Daily Activity</CardTitle>
+          </CardHeader>
+
+          <CardContent className="space-y-2">
+            {daily.map((d) => (
+              <div
+                key={d.date}
+                className="flex justify-between bg-slate-100 rounded-lg p-3"
+              >
+                <span>{d.date}</span>
+                <span className="text-sm text-muted-foreground">
+                  {d.totalCommits} commits
+                </span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
