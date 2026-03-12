@@ -7,7 +7,8 @@ import type { SyncRunDetail } from "../types";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle2, XCircle, Clock } from "lucide-react";
+
+import { Loader2, CheckCircle2, XCircle, Clock, ArrowLeft } from "lucide-react";
 
 export default function SyncResultPage() {
   const { syncRunId } = useParams();
@@ -47,21 +48,21 @@ export default function SyncResultPage() {
     switch (status) {
       case "SUCCESS":
         return (
-          <div className="flex items-center gap-2 text-green-600 font-medium">
+          <div className="flex items-center gap-2 text-green-600 font-semibold">
             <CheckCircle2 className="h-5 w-5" />
             Success
           </div>
         );
       case "FAILED":
         return (
-          <div className="flex items-center gap-2 text-red-600 font-medium">
+          <div className="flex items-center gap-2 text-red-600 font-semibold">
             <XCircle className="h-5 w-5" />
             Failed
           </div>
         );
       default:
         return (
-          <div className="flex items-center gap-2 text-yellow-600 font-medium">
+          <div className="flex items-center gap-2 text-yellow-600 font-semibold">
             <Clock className="h-5 w-5" />
             Running
           </div>
@@ -71,8 +72,8 @@ export default function SyncResultPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="h-6 w-6 animate-spin" />
+      <div className="flex justify-center items-center h-screen bg-slate-50">
+        <Loader2 className="h-7 w-7 animate-spin text-blue-600" />
       </div>
     );
   }
@@ -86,61 +87,85 @@ export default function SyncResultPage() {
   }
 
   return (
-    <div className="p-10 max-w-3xl mx-auto">
-      <Card className="shadow-xl rounded-2xl border">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold">
-            Sync Run #{data.syncRunId}
-          </CardTitle>
-        </CardHeader>
+    <div className="min-h-screen bg-slate-50 p-10 flex justify-center">
+      <div className="w-full max-w-3xl space-y-6">
+        {/* HEADER */}
 
-        <CardContent className="space-y-6">
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Status</span>
-            {renderStatus(data.runStatus)}
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-muted rounded-xl p-4">
-              <div className="text-sm text-muted-foreground">Started At</div>
-              <div className="font-medium">
-                {new Date(data.startedAt).toLocaleString()}
-              </div>
-            </div>
-
-            <div className="bg-muted rounded-xl p-4">
-              <div className="text-sm text-muted-foreground">Finished At</div>
-              <div className="font-medium">
-                {data.finishedAt
-                  ? new Date(data.finishedAt).toLocaleString()
-                  : "-"}
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-slate-100 dark:bg-slate-800 rounded-xl p-4 text-sm whitespace-pre-wrap">
-            {data.notes ?? "No notes"}
-          </div>
-
-          {/* View Snapshot Button */}
-          {data.snapshotId && data.runStatus === "SUCCESS" && (
-            <Button
-              className="w-full rounded-full h-11"
-              onClick={() => navigate(`/snapshot/${data.snapshotId}`)}
-            >
-              View Snapshot #{data.snapshotId}
-            </Button>
-          )}
-
-          <Button
-            variant="outline"
-            className="w-full rounded-full"
-            onClick={() => navigate("/sync")}
-          >
-            Back
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
+            <ArrowLeft className="w-4 h-4" />
           </Button>
-        </CardContent>
-      </Card>
+
+          <h1 className="text-2xl font-bold">Sync Run #{data.syncRunId}</h1>
+        </div>
+
+        {/* CARD */}
+
+        <Card className="shadow-lg rounded-2xl border">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-lg">Synchronization Status</CardTitle>
+
+            {renderStatus(data.runStatus)}
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            {/* TIME */}
+
+            <div className="grid grid-cols-2 gap-5">
+              <div className="bg-slate-100 rounded-xl p-4">
+                <div className="text-xs text-muted-foreground mb-1">
+                  Started At
+                </div>
+
+                <div className="font-medium">
+                  {new Date(data.startedAt).toLocaleString()}
+                </div>
+              </div>
+
+              <div className="bg-slate-100 rounded-xl p-4">
+                <div className="text-xs text-muted-foreground mb-1">
+                  Finished At
+                </div>
+
+                <div className="font-medium">
+                  {data.finishedAt
+                    ? new Date(data.finishedAt).toLocaleString()
+                    : "-"}
+                </div>
+              </div>
+            </div>
+
+            {/* NOTES */}
+
+            <div>
+              <div className="text-sm font-semibold mb-2">Notes</div>
+
+              <div className="bg-white border rounded-xl p-4 text-sm whitespace-pre-wrap">
+                {data.notes ?? "No notes"}
+              </div>
+            </div>
+
+            {/* BUTTONS */}
+
+            {data.snapshotId && data.runStatus === "SUCCESS" && (
+              <Button
+                className="w-full h-11 rounded-full"
+                onClick={() => navigate(`/snapshot/${data.snapshotId}`)}
+              >
+                View Snapshot #{data.snapshotId}
+              </Button>
+            )}
+
+            <Button
+              variant="outline"
+              className="w-full rounded-full"
+              onClick={() => navigate("/sync")}
+            >
+              Back
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

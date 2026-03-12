@@ -1,13 +1,12 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
 import { useEffect, useState } from "react";
-import {
-  getClasses,
-  getClassesOfLecturer,
-  getLecturers,
-  getLecturersOfClass,
-} from "../services";
+import { getClassesOfLecturer, getLecturers } from "../services";
 import { useNavigate } from "react-router-dom";
+
+import { Eye } from "lucide-react";
 
 export default function LecturerTable() {
   const [lecturers, setLecturers] = useState<any[]>([]);
@@ -36,37 +35,58 @@ export default function LecturerTable() {
 
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex justify-between mb-4">
-          <h2 className="font-semibold text-lg">Lecturer List</h2>
-        </div>
+      <CardHeader>
+        <CardTitle>Lecturer List</CardTitle>
+      </CardHeader>
 
-        <table className="w-full border rounded-md">
-          <thead className="bg-muted">
+      <CardContent className="p-0">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/50 border-b">
             <tr>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Assigned Classes</th>
-              <th className="p-3 text-center">View Details</th>
+              <th className="p-4 text-left">Lecturer</th>
+              <th className="p-4 text-left">Email</th>
+              <th className="p-4 text-left">Assigned Classes</th>
+              <th className="p-4 text-center">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {lecturers.map((lecturer: any) => (
-              <tr key={lecturer.lecturerId} className="border-t">
-                <td className="p-3">{lecturer.fullName}</td>
-                <td className="p-3">{lecturer.email}</td>
-                <td className="p-3">{classCount[lecturer.lecturerId] || 0}</td>
+              <tr
+                key={lecturer.lecturerId}
+                className="border-b hover:bg-muted/40 transition"
+              >
+                {/* Lecturer Name + Avatar */}
+                <td className="p-4 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                    {lecturer.fullName?.charAt(0)}
+                  </div>
 
-                <td className="p-3 text-center space-x-2">
+                  <span className="font-medium">{lecturer.fullName}</span>
+                </td>
+
+                {/* Email */}
+                <td className="p-4 text-muted-foreground">{lecturer.email}</td>
+
+                {/* Class Count */}
+                <td className="p-4">
+                  <Badge variant="secondary">
+                    {classCount[lecturer.lecturerId] || 0} classes
+                  </Badge>
+                </td>
+
+                {/* Actions */}
+                <td className="p-4 text-center">
                   <Button
                     size="sm"
                     variant="outline"
+                    className="flex items-center gap-2"
                     onClick={() =>
                       navigate(`/admin/lecturers/${lecturer.lecturerId}`)
                     }
                   >
-                    View Details
+                    <Eye size={16} />
+                    View
                   </Button>
                 </td>
               </tr>

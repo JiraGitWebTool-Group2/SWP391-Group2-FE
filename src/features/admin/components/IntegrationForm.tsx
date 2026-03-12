@@ -2,17 +2,22 @@ import { useEffect, useState } from "react";
 import { getIntegration, updateIntegration } from "../services";
 import { toast } from "sonner";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
+import { Github, Link } from "lucide-react";
+
 interface Props {
   projectId: number;
 }
 
 export default function IntegrationForm({ projectId }: Props) {
-  // ✅ JIRA (3 useState như bạn yêu cầu)
   const [baseUrl, setBaseUrl] = useState("");
   const [projectKey, setProjectKey] = useState("");
   const [jiraToken, setJiraToken] = useState("");
 
-  // ✅ GITHUB
   const [githubOrg, setGithubOrg] = useState("");
   const [githubToken, setGithubToken] = useState("");
 
@@ -22,7 +27,6 @@ export default function IntegrationForm({ projectId }: Props) {
     try {
       setLoading(true);
 
-      // Load Jira
       try {
         const jira = await getIntegration(projectId, "JIRA");
         if (jira) {
@@ -32,7 +36,6 @@ export default function IntegrationForm({ projectId }: Props) {
         }
       } catch {}
 
-      // Load GitHub
       try {
         const github = await getIntegration(projectId, "GITHUB");
         if (github) {
@@ -83,59 +86,81 @@ export default function IntegrationForm({ projectId }: Props) {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="space-y-6">
+    <div className="grid md:grid-cols-2 gap-6">
       {/* JIRA */}
-      <div className="border p-4 rounded space-y-3">
-        <h3 className="font-bold">Jira</h3>
+      <Card>
+        <CardHeader className="flex flex-row items-center gap-2">
+          <Link className="w-5 h-5 text-blue-500" />
+          <CardTitle>Jira Integration</CardTitle>
+        </CardHeader>
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Base URL"
-          value={baseUrl}
-          onChange={(e) => setBaseUrl(e.target.value)}
-        />
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Base URL</Label>
+            <Input
+              placeholder="https://your-domain.atlassian.net"
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+            />
+          </div>
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Project Key"
-          value={projectKey}
-          onChange={(e) => setProjectKey(e.target.value)}
-        />
+          <div className="space-y-2">
+            <Label>Project Key</Label>
+            <Input
+              placeholder="PROJ"
+              value={projectKey}
+              onChange={(e) => setProjectKey(e.target.value)}
+            />
+          </div>
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Token"
-          value={jiraToken}
-          onChange={(e) => setJiraToken(e.target.value)}
-        />
+          <div className="space-y-2">
+            <Label>API Token</Label>
+            <Input
+              type="password"
+              placeholder="Jira API Token"
+              value={jiraToken}
+              onChange={(e) => setJiraToken(e.target.value)}
+            />
+          </div>
 
-        <button className="bg-blue-500 text-white px-4 py-2" onClick={saveJira}>
-          Save
-        </button>
-      </div>
+          <Button className="w-full" onClick={saveJira}>
+            Save Jira Integration
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* GITHUB */}
-      <div className="border p-4 rounded space-y-3">
-        <h3 className="font-bold">GitHub</h3>
+      <Card>
+        <CardHeader className="flex flex-row items-center gap-2">
+          <Github className="w-5 h-5" />
+          <CardTitle>GitHub Integration</CardTitle>
+        </CardHeader>
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Organization"
-          value={githubOrg}
-          onChange={(e) => setGithubOrg(e.target.value)}
-        />
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Organization</Label>
+            <Input
+              placeholder="your-github-org"
+              value={githubOrg}
+              onChange={(e) => setGithubOrg(e.target.value)}
+            />
+          </div>
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Token"
-          value={githubToken}
-          onChange={(e) => setGithubToken(e.target.value)}
-        />
+          <div className="space-y-2">
+            <Label>Personal Access Token</Label>
+            <Input
+              type="password"
+              placeholder="GitHub Token"
+              value={githubToken}
+              onChange={(e) => setGithubToken(e.target.value)}
+            />
+          </div>
 
-        <button className="bg-black text-white px-4 py-2" onClick={saveGithub}>
-          Save
-        </button>
-      </div>
+          <Button className="w-full" onClick={saveGithub}>
+            Save GitHub Integration
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

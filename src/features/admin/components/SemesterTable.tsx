@@ -1,4 +1,16 @@
 import type { Semester } from "../types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2, Layers } from "lucide-react";
 
 interface Props {
   semesters: Semester[];
@@ -17,55 +29,79 @@ export default function SemesterTable({
     return new Date(date).toLocaleDateString("en-GB");
   };
 
+  const getStatusColor = (status: string) => {
+    if (status === "ACTIVE") return "bg-green-100 text-green-700";
+    if (status === "UPCOMING") return "bg-blue-100 text-blue-700";
+    return "bg-gray-100 text-gray-600";
+  };
+
   return (
-    <div className="bg-white border rounded shadow">
-      <table className="w-full">
-        <thead className="border-b bg-gray-50">
-          <tr>
-            <th className="text-left p-4">Code</th>
-            <th className="text-left p-4">Semester</th>
-            <th className="text-left p-4">Start Date</th>
-            <th className="text-left p-4">End Date</th>
-            <th className="text-left p-4">Status</th>
-            <th className="text-left p-4">Action</th>
-          </tr>
-        </thead>
+    <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      <Table>
+        <TableHeader className="bg-gray-50">
+          <TableRow>
+            <TableHead>Code</TableHead>
+            <TableHead>Semester</TableHead>
+            <TableHead>Start Date</TableHead>
+            <TableHead>End Date</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {semesters.map((s) => (
-            <tr key={s.semesterId} className="border-b hover:bg-gray-50">
-              <td className="p-4 cursor-pointer">{s.code}</td>
-              <td className="p-4 cursor-pointer">{s.name}</td>
-              <td className="p-4 cursor-pointer">{formatDate(s.startDate)}</td>
-              <td className="p-4 cursor-pointer">{formatDate(s.endDate)}</td>
-              <td className="p-4 cursor-pointer">{s.status}</td>
+            <TableRow
+              key={s.semesterId}
+              className="hover:bg-slate-50 transition"
+            >
+              <TableCell
+                className="font-medium cursor-pointer"
+                onClick={() => onClickSemester(s.semesterId)}
+              >
+                {s.code}
+              </TableCell>
 
-              <td className="p-4 flex gap-3">
-                <button
+              <TableCell>{s.name}</TableCell>
+
+              <TableCell>{formatDate(s.startDate)}</TableCell>
+
+              <TableCell>{formatDate(s.endDate)}</TableCell>
+
+              <TableCell>
+                <Badge className={getStatusColor(s.status)}>{s.status}</Badge>
+              </TableCell>
+
+              <TableCell className="flex justify-end gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => onEditSemester(s)}
-                  className="text-blue-600 hover:underline"
                 >
-                  Edit
-                </button>
+                  <Pencil size={16} />
+                </Button>
 
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => onDeleteSemester(s.semesterId)}
-                  className="text-red-600 hover:underline"
+                  className="text-red-500"
                 >
-                  Delete
-                </button>
+                  <Trash2 size={16} />
+                </Button>
 
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => onClickSemester(s.semesterId)}
-                  className="text-blue-600 hover:underline"
                 >
-                  Classes
-                </button>
-              </td>
-            </tr>
+                  <Layers size={16} />
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }
