@@ -1,46 +1,80 @@
-import { useProjectStore } from "@/stores/project.store";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getIntegratedGroups, startSync } from "../services";
+
 import SyncForm from "../components/SyncForm";
-import type { CreateSyncRunRequest } from "../types";
-import { startSync } from "../services";
+import type { IntegratedGroup, CreateSyncRunRequest } from "../types";
+import { toast } from "sonner";
 
 export default function SyncPage() {
+  const [groups, setGroups] = useState<IntegratedGroup[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<IntegratedGroup | null>(
+    null,
+  );
+
   const navigate = useNavigate();
-  const projectId = useProjectStore((s) => s.currentProjectId);
 
-  if (!projectId) {
-    return (
-      <div className="p-10 text-center text-red-500 text-lg">
-        No project selected
-      </div>
-    );
-  }
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const data = await getIntegratedGroups();
+        setGroups(data);
+      } catch (err) {
+        console.error(err);
+        toast.error("Không tải được danh sách group");
+      }
+    };
 
-  const handleStart = async (
+    fetchGroups();
+  }, []);
+
+  const handleStartSync = async (
     payload: Omit<CreateSyncRunRequest, "projectId">,
   ) => {
+    if (!selectedGroup) return;
+
     try {
       const res = await startSync({
         ...payload,
-        projectId,
+        projectId: selectedGroup.projectId,
       });
+
+      toast.success("Sync started");
 
       navigate(`/sync-result/${res.syncRunId}`);
     } catch (err) {
       console.error(err);
-      alert("Start sync failed");
+      toast.error("Start sync failed");
     }
   };
 
   return (
     <div className="p-10 max-w-2xl mx-auto">
-      <div className="bg-white dark:bg-slate-900 shadow-xl rounded-2xl p-8 border">
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          Start Sync for Project #{projectId}
-        </h1>
+      {/* Select Group */}
+      <div className="mb-6">
+        <label className="block mb-2 font-medium">Select Group</label>
 
-        <SyncForm onSubmit={handleStart} />
+        <select
+          className="w-full border rounded-lg p-2"
+          onChange={(e) => {
+            const group = groups.find(
+              (g) => g.groupId === Number(e.target.value),
+            );
+            setSelectedGroup(group || null);
+          }}
+        >
+          <option value="">Choose group</option>
+
+          {groups.map((g) => (
+            <option key={g.groupId} value={g.groupId}>
+              {g.groupName} - {g.projectName}
+            </option>
+          ))}
+        </select>
       </div>
+
+      {/* Sync Form */}
+      {selectedGroup && <SyncForm onSubmit={handleStartSync} />}
     </div>
   );
 }

@@ -17,7 +17,7 @@ import LecturerManagementPage from "@/features/admin/pages/LecturerManagementPag
 import AssignLecturerPage from "@/features/admin/pages/AssignLecturerPage";
 import IntegrationConfigPage from "@/features/admin/pages/IntegrationConfigPage";
 import UserManagementPage from "@/features/admin/pages/UserManagementPage";
-import AdminGroupDashboardPage from "@/features/admin/pages/AdminGroupDashboardPage";
+// import AdminGroupDashboardPage from "@/features/admin/pages/AdminGroupDashboardPage";
 import LecturerDetailPage from "@/features/admin/pages/LecturerDetailPage";
 
 // ===== AUTH PAGES =====
@@ -44,6 +44,7 @@ import ReportEditorPage from "@/features/report/pages/ReportEditorPage";
 import ReportReviewPage from "@/features/report/pages/ReportReviewPage";
 import ProgressReportPage from "@/features/report/pages/ProgressReportPage";
 import RequireAdmin from "@/components/guards/RequireAdmin";
+import RepositoryPage from "@/features/admin/pages/RepositoryPage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
@@ -93,11 +94,16 @@ export const router = createBrowserRouter([
         element: <IntegrationConfigPage />,
       },
 
-      // ===== GROUP DASHBOARD =====
       {
-        path: "groups/:groupId/dashboard",
-        element: <AdminGroupDashboardPage />,
+        path: "projects/:projectId/repository",
+        element: <RepositoryPage />,
       },
+
+      // ===== GROUP DASHBOARD =====
+      // {
+      //   path: "groups/:groupId/dashboard",
+      //   element: <AdminGroupDashboardPage />,
+      // },
 
       // ===== LECTURERS =====
       {

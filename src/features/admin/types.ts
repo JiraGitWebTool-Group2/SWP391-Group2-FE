@@ -12,18 +12,6 @@ export interface IntegrationConfigRequest {
 
 /* ================= GROUPS ================= */
 
-export interface Group {
-  groupId: number;
-  groupName: string;
-  description: string;
-  createdAt: string;
-}
-
-export interface CreateGroupRequest {
-  groupName: string;
-  description: string;
-}
-
 /* ================= USERS ================= */
 export type UserRole = "ADMIN" | "LECTURER" | "STUDENT";
 export interface CreateUserRequest {
@@ -75,14 +63,6 @@ export interface Snapshot {
 }
 
 /* ================= PROJECTS ================= */
-
-export interface Project {
-  projectId: number;
-  projectName: string;
-  description?: string;
-  groupId: number;
-  createdAt?: string;
-}
 
 export interface CreateProjectRequest {
   projectName: string;
@@ -162,6 +142,13 @@ export interface Class {
   status?: string;
 }
 
+export interface GroupWithProject {
+  groupId: number;
+  groupName: string;
+  projectId?: number;
+  projectName?: string;
+}
+
 /* ================= CLASS DETAIL ================= */
 
 export interface ClassDetail {
@@ -185,6 +172,8 @@ export interface StudentOfClass {
   studentId: number;
   studentEmail: string;
   studentName: string;
+  groupName: string;
+  groupId: number;
   studentRole: string;
   joinedAt: string;
   isActive: boolean;
@@ -194,4 +183,12 @@ export interface StudentOfClass {
 
 export interface AddStudentsBulkRequest {
   studentIds: number[];
+}
+
+export interface GroupOfClass {
+  groupId: number;
+  groupName: string;
+  projectId?: number;
+  projectName?: string;
+  integrations?: string[];
 }

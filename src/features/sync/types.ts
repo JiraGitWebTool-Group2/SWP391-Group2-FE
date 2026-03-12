@@ -21,3 +21,10 @@ export interface SyncRunDetail {
   finishedAt?: string;
   snapshotId?: number;
 }
+
+export interface IntegratedGroup {
+  groupId: number;
+  groupName: string;
+  projectId: number;
+  projectName: string;
+}

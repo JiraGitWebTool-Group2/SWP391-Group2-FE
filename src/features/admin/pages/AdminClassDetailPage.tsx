@@ -4,22 +4,23 @@ import { useEffect, useState } from "react";
 import {
   getClassById,
   getLecturersOfClass,
-  getLecturers,
-  assignLecturer,
   getStudentsOfClass,
   removeStudentFromClass,
   addStudentsBulk,
+  getGroupsByClass,
 } from "../services";
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 import type {
-  AllLecturer,
   ClassDetail,
+  GroupOfClass,
   Lecturer,
   StudentOfClass,
 } from "../types";
+
+/* ================= GROUP TYPE ================= */
 
 export default function AdminClassDetailPage() {
   const { classId } = useParams();
@@ -28,12 +29,8 @@ export default function AdminClassDetailPage() {
   const [classDetail, setClassDetail] = useState<ClassDetail | null>(null);
 
   const [lecturers, setLecturers] = useState<Lecturer[]>([]);
-  const [allLecturers, setAllLecturers] = useState<AllLecturer[]>([]);
-  const [selectedLecturer, setSelectedLecturer] = useState<
-    number | undefined
-  >();
-
   const [students, setStudents] = useState<StudentOfClass[]>([]);
+  const [groups, setGroups] = useState<GroupOfClass[]>([]);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -82,9 +79,34 @@ export default function AdminClassDetailPage() {
         return;
       }
 
-      setStudents(Array.isArray(data) ? data : [data]);
+      const list = Array.isArray(data) ? data : [data];
+
+      const uniqueStudents = Array.from(
+        new Map(list.map((s) => [s.studentId, s])).values(),
+      );
+
+      setStudents(uniqueStudents);
     } catch {
       setError("Cannot load students.");
+    }
+  };
+
+  /* ================= LOAD GROUPS ================= */
+
+  const loadGroups = async () => {
+    try {
+      if (!classId) return;
+
+      const data = await getGroupsByClass(Number(classId));
+
+      if (!data) {
+        setGroups([]);
+        return;
+      }
+
+      setGroups(Array.isArray(data) ? data : [data]);
+    } catch {
+      setError("Cannot load groups.");
     }
   };
 
@@ -135,6 +157,7 @@ export default function AdminClassDetailPage() {
     loadClass();
     loadLecturers();
     loadStudents();
+    loadGroups();
   }, [classId]);
 
   /* ================= UI ================= */
@@ -151,7 +174,7 @@ export default function AdminClassDetailPage() {
         <h1 className="text-2xl font-semibold">Class Detail</h1>
       </div>
 
-      {/* ERROR MESSAGE */}
+      {/* ERROR */}
 
       {error && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>
@@ -192,9 +215,13 @@ export default function AdminClassDetailPage() {
       <div className="mb-8 bg-white border rounded p-4 shadow">
         <h2 className="font-semibold mb-4">Lecturers</h2>
 
-        {lecturers.map((l) => (
+        {lecturers.length === 0 && (
+          <p className="text-gray-500">No lecturers</p>
+        )}
+
+        {lecturers.map((l, index) => (
           <div
-            key={l.lecturerId}
+            key={`${l.lecturerId}-${index}`}
             className="flex justify-between items-center border-t py-3"
           >
             <div>
@@ -203,6 +230,67 @@ export default function AdminClassDetailPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* ================= GROUPS ================= */}
+
+      <div className="mb-8 bg-white border rounded p-4 shadow">
+        <h2 className="font-semibold mb-4">Groups</h2>
+
+        <table className="w-full">
+          <thead className="border-b">
+            <tr>
+              <th className="text-left p-2">Group Name</th>
+              <th className="text-left p-2">Project</th>
+              <th className="text-left p-2">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {groups.length === 0 && (
+              <tr>
+                <td colSpan={3} className="p-3 text-gray-500 text-center">
+                  No groups
+                </td>
+              </tr>
+            )}
+
+            {groups.map((g, index) => (
+              <tr key={`${g.groupId}-${index}`} className="border-t">
+                <td className="p-3">{g.groupName}</td>
+
+                <td className="p-3">{g.projectName ?? "-"}</td>
+
+                <td className="p-3 flex gap-2">
+                  {g.projectId ? (
+                    <>
+                      <Button
+                        size="sm"
+                        onClick={() =>
+                          navigate(`/admin/projects/${g.projectId}/integration`)
+                        }
+                      >
+                        Integration
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          navigate(`/admin/projects/${g.projectId}/repository`)
+                        }
+                      >
+                        Repository
+                      </Button>
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* ================= STUDENTS ================= */}
@@ -220,6 +308,7 @@ export default function AdminClassDetailPage() {
             <tr>
               <th className="p-3 text-left">Name</th>
               <th className="p-3 text-left">Email</th>
+              <th className="p-3 text-left">Group</th>
               <th className="p-3 text-right">Action</th>
             </tr>
           </thead>
@@ -227,17 +316,19 @@ export default function AdminClassDetailPage() {
           <tbody>
             {students.length === 0 && (
               <tr>
-                <td colSpan={3} className="p-3 text-gray-500 text-center">
+                <td colSpan={4} className="p-3 text-gray-500 text-center">
                   No students
                 </td>
               </tr>
             )}
 
-            {students.map((s) => (
-              <tr key={s.studentId} className="border-t">
+            {students.map((s, index) => (
+              <tr key={`${s.studentId}-${index}`} className="border-t">
                 <td className="p-3">{s.studentName}</td>
 
                 <td className="p-3">{s.studentEmail}</td>
+
+                <td className="p-3">-</td>
 
                 <td className="p-3 text-right">
                   <Button
