@@ -19,6 +19,16 @@ import type {
   Lecturer,
   StudentOfClass,
 } from "../types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 /* ================= GROUP TYPE ================= */
 
@@ -162,187 +172,230 @@ export default function AdminClassDetailPage() {
   /* ================= UI ================= */
 
   return (
-    <div className="p-8">
+    <div className="p-8 space-y-8 bg-muted/30 min-h-screen">
       {/* HEADER */}
-
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
 
-        <h1 className="text-2xl font-semibold">Class Detail</h1>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Class Detail</h1>
+          <p className="text-muted-foreground text-sm">
+            Manage class information, lecturers, groups and students
+          </p>
+        </div>
       </div>
 
       {/* ERROR */}
-
       {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>
+        <div className="p-4 border border-red-200 bg-red-50 text-red-700 rounded-lg">
+          {error}
+        </div>
       )}
 
       {/* ================= CLASS INFO ================= */}
-
       {classDetail && (
-        <div className="mb-8 bg-white border rounded p-4 shadow">
-          <h2 className="font-semibold mb-4">Class Information</h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Class Information</CardTitle>
+          </CardHeader>
 
-          <div className="grid grid-cols-2 gap-4">
-            <p>
-              <b>Class Name:</b> {classDetail.className}
-            </p>
+          <CardContent className="grid md:grid-cols-5 gap-6">
+            <div>
+              <p className="text-sm text-muted-foreground">Class Code</p>
+              <p className="font-semibold">{classDetail.classCode}</p>
+            </div>
 
-            <p>
-              <b>Class Code:</b> {classDetail.classCode}
-            </p>
-
-            <p>
-              <b>Course:</b> {classDetail.courseCode}
-            </p>
-
-            <p>
-              <b>Semester:</b> {classDetail.semesterName}
-            </p>
-
-            <p>
-              <b>Status:</b> {classDetail.status}
-            </p>
-          </div>
-        </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Status</p>
+              <Badge variant="secondary">{classDetail.status}</Badge>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* ================= LECTURERS ================= */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Lecturers</CardTitle>
+        </CardHeader>
 
-      <div className="mb-8 bg-white border rounded p-4 shadow">
-        <h2 className="font-semibold mb-4">Lecturers</h2>
+        <CardContent className="space-y-3">
+          {lecturers.length === 0 && (
+            <p className="text-muted-foreground text-sm">No lecturers</p>
+          )}
 
-        {lecturers.length === 0 && (
-          <p className="text-gray-500">No lecturers</p>
-        )}
-
-        {lecturers.map((l, index) => (
-          <div
-            key={`${l.lecturerId}-${index}`}
-            className="flex justify-between items-center border-t py-3"
-          >
-            <div>
-              <p className="font-medium">{l.lecturerName}</p>
-              <p className="text-sm text-gray-500">{l.lecturerEmail}</p>
+          {lecturers.map((l, index) => (
+            <div
+              key={`${l.lecturerId}-${index}`}
+              className="flex justify-between items-center border rounded-lg p-4 hover:bg-muted/40 transition"
+            >
+              <div>
+                <p className="font-medium">{l.lecturerName}</p>
+                <p className="text-sm text-muted-foreground">
+                  {l.lecturerEmail}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </CardContent>
+      </Card>
 
       {/* ================= GROUPS ================= */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Groups</CardTitle>
+        </CardHeader>
 
-      <div className="mb-8 bg-white border rounded p-4 shadow">
-        <h2 className="font-semibold mb-4">Groups</h2>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Group Name</TableHead>
+                  <TableHead>Project</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
 
-        <table className="w-full">
-          <thead className="border-b">
-            <tr>
-              <th className="text-left p-2">Group Name</th>
-              <th className="text-left p-2">Project</th>
-              <th className="text-left p-2">Actions</th>
-            </tr>
-          </thead>
+              <TableBody>
+                {groups.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={3}
+                      className="text-center text-muted-foreground"
+                    >
+                      No groups
+                    </TableCell>
+                  </TableRow>
+                )}
 
-          <tbody>
-            {groups.length === 0 && (
-              <tr>
-                <td colSpan={3} className="p-3 text-gray-500 text-center">
-                  No groups
-                </td>
-              </tr>
-            )}
+                {groups.map((g, index) => (
+                  <TableRow key={`${g.groupId}-${index}`}>
+                    <TableCell className="font-medium">{g.groupName}</TableCell>
 
-            {groups.map((g, index) => (
-              <tr key={`${g.groupId}-${index}`} className="border-t">
-                <td className="p-3">{g.groupName}</td>
+                    <TableCell className="align-middle">
+                      {g.projectName ? (
+                        <Badge variant="secondary">{g.projectName}</Badge>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
 
-                <td className="p-3">{g.projectName}</td>
+                    <TableCell>
+                      <div className="flex justify-center gap-2">
+                        {g.projectId ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-primary/10 hover:border-primary hover:text-primary transition bg-amber-500"
+                              onClick={() =>
+                                navigate(
+                                  `/admin/projects/${g.projectId}/integration`,
+                                )
+                              }
+                            >
+                              Integration
+                            </Button>
 
-                <td className="p-3 flex gap-2">
-                  {g.projectId ? (
-                    <>
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          navigate(`/admin/projects/${g.projectId}/integration`)
-                        }
-                      >
-                        Integration
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          navigate(`/admin/projects/${g.projectId}/repository`)
-                        }
-                      >
-                        Repository
-                      </Button>
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-primary/10 hover:border-primary hover:text-primary transition bg-amber-500"
+                              onClick={() =>
+                                navigate(
+                                  `/admin/projects/${g.projectId}/repository`,
+                                )
+                              }
+                            >
+                              Repository
+                            </Button>
+                          </>
+                        ) : (
+                          "-"
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* ================= STUDENTS ================= */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Students</CardTitle>
 
-      <div className="bg-white border rounded shadow">
-        <div className="p-4 border-b font-semibold flex justify-between">
-          Students
-          <Button size="sm" onClick={handleAddStudent}>
+          <Button
+            size="sm"
+            className="px-4 bg-blue-500 text-white hover:bg-primary/90 shadow-sm hover:shadow-md hover:scale-[1.03] transition-all duration-200"
+            onClick={handleAddStudent}
+          >
             Add Student
           </Button>
-        </div>
+        </CardHeader>
 
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Group</th>
-              <th className="p-3 text-right">Action</th>
-            </tr>
-          </thead>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Group</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
 
-          <tbody>
-            {students.length === 0 && (
-              <tr>
-                <td colSpan={4} className="p-3 text-gray-500 text-center">
-                  No students
-                </td>
-              </tr>
-            )}
+              <TableBody>
+                {students.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="text-center text-muted-foreground"
+                    >
+                      No students
+                    </TableCell>
+                  </TableRow>
+                )}
 
-            {students.map((s, index) => (
-              <tr key={`${s.studentId}-${index}`} className="border-t">
-                <td className="p-3">{s.studentName}</td>
+                {students.map((s, index) => (
+                  <TableRow key={`${s.studentId}-${index}`}>
+                    <TableCell className="font-medium">
+                      {s.studentName}
+                    </TableCell>
 
-                <td className="p-3">{s.studentEmail}</td>
+                    <TableCell>{s.studentEmail}</TableCell>
 
-                <td className="p-3">{s.groupName}</td>
+                    <TableCell>
+                      {s.groupName ? (
+                        <Badge variant="outline">{s.groupName}</Badge>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
 
-                <td className="p-3 text-right">
-                  <Button
-                    size="sm"
-                    className="bg-red-500 text-white hover:bg-red-600"
-                    onClick={() => handleRemoveStudent(s.studentId)}
-                  >
-                    Remove
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        className="bg-red-500 text-white hover:bg-red-600 shadow-sm hover:shadow-md hover:scale-[1.03] transition-all duration-200"
+                        onClick={() => handleRemoveStudent(s.studentId)}
+                      >
+                        Remove
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

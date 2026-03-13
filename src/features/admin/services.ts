@@ -3,7 +3,6 @@ import type {
   AddStudentsBulkRequest,
   ClassDetail,
   CreateOrUpdateRepositoryRequest,
-  CreateProjectRequest,
   CreateUserRequest,
   IntegrationConfigRequest,
   RepositoryResponse,
@@ -152,8 +151,6 @@ export const getClasses = async () => {
 export const createClass = async (data: {
   semesterId: number;
   classCode: string;
-  courseCode: string;
-  className: string;
   lecturerUserId?: number;
   status?: string;
 }) => {

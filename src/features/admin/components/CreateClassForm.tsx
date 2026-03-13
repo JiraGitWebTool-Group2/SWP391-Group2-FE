@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { getLecturers } from "../services";
 import type { AllLecturer } from "../types";
 
 interface Props {
   onCreate: (data: {
+    semesterId: number;
     classCode: string;
-    courseCode: string;
-    className: string;
     lecturerUserId?: number;
     status: string;
   }) => void;
@@ -19,9 +21,9 @@ interface Props {
 }
 
 export default function CreateClassForm({ onCreate, onClose }: Props) {
+  const { semesterId } = useParams(); // ✅ FIX
+
   const [classCode, setClassCode] = useState("");
-  const [courseCode, setCourseCode] = useState("");
-  const [className, setClassName] = useState("");
   const [status, setStatus] = useState("PLANNING");
 
   const [allLecturers, setAllLecturers] = useState<AllLecturer[]>([]);
@@ -49,15 +51,19 @@ export default function CreateClassForm({ onCreate, onClose }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!classCode || !courseCode || !className) {
-      alert("Please fill all required fields");
+    if (!classCode) {
+      alert("Please fill class code");
+      return;
+    }
+
+    if (!semesterId) {
+      alert("Semester ID not found");
       return;
     }
 
     onCreate({
+      semesterId: Number(semesterId),
       classCode,
-      courseCode,
-      className,
       lecturerUserId: selectedLecturer,
       status,
     });
@@ -65,42 +71,19 @@ export default function CreateClassForm({ onCreate, onClose }: Props) {
 
   return (
     <div className="bg-white border rounded-2xl shadow-md p-8 mb-8 max-w-3xl">
-      ```
       <h2 className="text-xl font-semibold mb-6">Create Class</h2>
+
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* CLASS CODE + COURSE CODE */}
-
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label>Class Code</Label>
-            <Input
-              className="bg-gray-50 focus:bg-white"
-              value={classCode}
-              onChange={(e) => setClassCode(e.target.value)}
-              placeholder="SE1701"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Course Code</Label>
-            <Input
-              className="bg-gray-50 focus:bg-white"
-              value={courseCode}
-              onChange={(e) => setCourseCode(e.target.value)}
-              placeholder="PRJ301"
-            />
-          </div>
-        </div>
-
-        {/* CLASS NAME */}
+        {/* CLASS CODE */}
 
         <div className="space-y-2">
-          <Label>Class Name</Label>
+          <Label>Class Code</Label>
+
           <Input
             className="bg-gray-50 focus:bg-white"
-            value={className}
-            onChange={(e) => setClassName(e.target.value)}
-            placeholder="Software Engineering Class"
+            value={classCode}
+            onChange={(e) => setClassCode(e.target.value)}
+            placeholder="SE1701"
           />
         </div>
 
@@ -110,7 +93,7 @@ export default function CreateClassForm({ onCreate, onClose }: Props) {
           <Label>Lecturer</Label>
 
           <select
-            className="w-full border rounded-md px-3 py-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded-md px-3 py-2 text-sm bg-gray-50 focus:bg-white"
             value={selectedLecturer || ""}
             onChange={(e) =>
               setSelectedLecturer(
@@ -136,7 +119,7 @@ export default function CreateClassForm({ onCreate, onClose }: Props) {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="w-full border rounded-md px-3 py-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded-md px-3 py-2 text-sm bg-gray-50 focus:bg-white"
           >
             <option value="PLANNING">PLANNING</option>
             <option value="ACTIVE">ACTIVE</option>

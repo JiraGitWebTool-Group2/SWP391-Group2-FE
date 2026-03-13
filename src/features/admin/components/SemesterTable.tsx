@@ -41,7 +41,7 @@ export default function SemesterTable({
         <TableHeader className="bg-gray-50">
           <TableRow>
             <TableHead>Code</TableHead>
-            <TableHead>Semester</TableHead>
+
             <TableHead>Start Date</TableHead>
             <TableHead>End Date</TableHead>
             <TableHead>Status</TableHead>
@@ -61,8 +61,6 @@ export default function SemesterTable({
               >
                 {s.code}
               </TableCell>
-
-              <TableCell>{s.name}</TableCell>
 
               <TableCell>{formatDate(s.startDate)}</TableCell>
 

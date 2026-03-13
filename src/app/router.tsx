@@ -24,7 +24,7 @@ import LecturerDetailPage from "@/features/admin/pages/LecturerDetailPage";
 import LoginPage from "@/features/auth/pages/LoginPage";
 
 // ===== USER PAGES =====
-import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
+
 import GroupListPage from "@/features/groups/pages/GroupListPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
@@ -45,6 +45,11 @@ import ReportReviewPage from "@/features/report/pages/ReportReviewPage";
 import ProgressReportPage from "@/features/report/pages/ProgressReportPage";
 import RequireAdmin from "@/components/guards/RequireAdmin";
 import RepositoryPage from "@/features/admin/pages/RepositoryPage";
+import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
+import DashboardPageDetail from "@/features/dashboard/pages/DashboardPageDetail";
+import ClassListPage from "@/features/groups/pages/ClassListPage";
+import ClassDetailPage from "@/features/groups/pages/ClassDetailPage";
+import { UserProfilePage } from "@/features/user/pages/UserProfilePage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
@@ -140,12 +145,20 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
-        path: "groups",
-        element: <GroupListPage />,
+        path: "classes",
+        element: <ClassListPage />,
+      },
+      {
+        path: "classes/:classId",
+        element: <ClassDetailPage />,
       },
       {
         path: "groups/:groupId",
         element: <GroupDetailPage />,
+      },
+      {
+        path: "groups/:groupId/dashboard",
+        element: <DashboardPageDetail />,
       },
       {
         path: "sync",
@@ -202,6 +215,10 @@ export const router = createBrowserRouter([
         element: <RequireUser allowedRoles={["LECTURER"]} />,
         children: [
           // ----- SRS REVIEW -----
+          {
+            path: "profile",
+            element: <UserProfilePage />,
+          },
           {
             path: "srs/review/:id",
             element: <SrsReviewPage />,

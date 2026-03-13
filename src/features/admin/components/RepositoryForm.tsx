@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { GitBranch } from "lucide-react";
+import { GitBranch, Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -92,9 +92,11 @@ export default function RepositoryForm({
   };
 
   return (
-    <Card className="max-w-2xl mx-auto mt-6 shadow-sm">
+    <Card className="max-w-2xl mx-auto mt-8 shadow-sm hover:shadow-md transition">
       <CardHeader className="flex flex-row items-center gap-3">
-        <GitBranch className="w-5 h-5 text-muted-foreground" />
+        <div className="p-2 rounded-md bg-muted">
+          <GitBranch className="w-5 h-5 text-muted-foreground" />
+        </div>
 
         <div>
           <CardTitle>
@@ -109,44 +111,63 @@ export default function RepositoryForm({
 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Repository Name */}
           <div className="space-y-2">
             <Label>Repository Name</Label>
             <Input
               name="repoName"
               value={formData.repoName}
               onChange={handleChange}
-              placeholder="example-repository"
+              placeholder="e.g. project-management-system"
+              className="focus-visible:ring-2"
               required
             />
           </div>
 
+          {/* Repository URL */}
           <div className="space-y-2">
             <Label>Repository URL</Label>
             <Input
               name="repoUrl"
               value={formData.repoUrl}
               onChange={handleChange}
-              placeholder="https://github.com/your-org/repository"
+              placeholder="e.g. https://github.com/your-org/project"
+              className="focus-visible:ring-2"
               required
             />
           </div>
 
+          {/* Default Branch */}
           <div className="space-y-2">
             <Label>Default Branch</Label>
             <Input
               name="defaultBranch"
               value={formData.defaultBranch}
               onChange={handleChange}
+              placeholder="e.g. main"
+              className="focus-visible:ring-2"
               required
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline">
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4 border-t">
+            <Button
+              type="button"
+              variant="outline"
+              className="border-red-500 text-red-500 bg-red-50 hover:bg-red-500 hover:text-white transition-all duration-200 hover:shadow-md hover:scale-[1.03]"
+            >
               Cancel
             </Button>
 
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={loading}
+              className="flex items-center justify-center gap-2 px-6 border-primary text-primary bg-primary/10 hover:bg-primary/20 shadow-sm hover:shadow-md hover:scale-[1.03] transition-all duration-200 bg-green-400"
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+
               {loading
                 ? "Processing..."
                 : mode === "create"

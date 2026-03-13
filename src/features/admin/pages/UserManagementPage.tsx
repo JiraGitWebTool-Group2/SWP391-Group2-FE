@@ -22,7 +22,7 @@ export default function UserManagementPage() {
                   : "text-gray-600 hover:text-black"
               }`}
             >
-              Import Users
+              Import Lecturers and Students
             </button>
 
             <button
@@ -33,7 +33,7 @@ export default function UserManagementPage() {
                   : "text-gray-600 hover:text-black"
               }`}
             >
-              Add User
+              Add Lecturers and Students
             </button>
           </div>
         </div>
