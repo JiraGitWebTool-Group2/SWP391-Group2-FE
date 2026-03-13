@@ -1,5 +1,6 @@
 import { api } from "@/lib/axios";
 import type {
+  Class,
   CreateSyncRunRequest,
   IntegratedGroup,
   StartSyncResponse,
@@ -21,4 +22,11 @@ export const getSyncRun = async (syncRunId: number): Promise<SyncRunDetail> => {
 export const getIntegratedGroups = async (): Promise<IntegratedGroup[]> => {
   const res = await api.get("/groups/integrated");
   return res.data;
+};
+
+export const classService = {
+  getClassesOfLecturer: async (lecturerId: number): Promise<Class[]> => {
+    const res = await api.get(`/lecturers/${lecturerId}/classes`);
+    return res.data;
+  },
 };

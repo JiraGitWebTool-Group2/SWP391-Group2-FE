@@ -17,7 +17,7 @@ export type UserRole = "ADMIN" | "LECTURER" | "STUDENT";
 export interface CreateUserRequest {
   email: string;
   fullName: string;
-  // password: string;
+  password: string;
   role: UserRole;
 }
 
@@ -76,7 +76,6 @@ export interface CreateProjectRequest {
 export interface Semester {
   semesterId: number;
   code: string;
-  name: string;
   startDate: string;
   endDate: string;
   status: string;
@@ -136,8 +135,7 @@ export interface Class {
   classId: number;
   semesterId: number;
   classCode: string;
-  courseCode: string;
-  className: string;
+
   lecturerUserId?: number;
   status?: string;
 }
@@ -155,10 +153,7 @@ export interface ClassDetail {
   classId: number;
   semesterId?: number;
   semesterCode: string;
-  semesterName: string;
   classCode: string;
-  courseCode: string;
-  className: string;
   lecturerUserId: number | null;
   status: string;
   createdAt?: string;

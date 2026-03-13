@@ -17,6 +17,7 @@ import {
 } from "../services";
 
 import type { Class, AllLecturer, Semester } from "../types";
+import { toast } from "sonner";
 
 export default function ClassManagementPage() {
   const { semesterId } = useParams();
@@ -66,22 +67,39 @@ export default function ClassManagementPage() {
   const handleCreateClass = async (data: any) => {
     if (!semesterId) return;
 
-    await createClass({
-      semesterId: Number(semesterId),
-      ...data,
-    });
+    try {
+      await createClass({
+        semesterId: Number(semesterId),
+        ...data,
+      });
 
-    await loadClasses();
-    setShowForm(false);
+      await loadClasses();
+      setShowForm(false);
+
+      toast.success("Class created successfully");
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message ||
+          "Create failed because class already exists",
+      );
+    }
   };
-
   /* ================= DELETE ================= */
 
   const handleDeleteClass = async (id: number) => {
     if (!confirm("Delete this class?")) return;
 
-    await deleteClass(id);
-    await loadClasses();
+    try {
+      await deleteClass(id);
+      await loadClasses();
+
+      toast.success("Class deleted successfully");
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message ||
+          "Delete failed because class is already used",
+      );
+    }
   };
 
   /* ================= UPDATE ================= */
@@ -89,19 +107,40 @@ export default function ClassManagementPage() {
   const handleEditClass = async () => {
     if (!editingClass) return;
 
-    const payload = {
-      semesterId: Number(editingClass.semesterId),
-      classCode: editingClass.classCode,
-      courseCode: editingClass.courseCode,
-      className: editingClass.className,
-      lecturerUserId: editingClass.lecturerUserId,
-      status: editingClass.status,
-    };
+    const duplicated = classes.some(
+      (c) =>
+        c.classId !== editingClass.classId &&
+        c.classCode.trim().toLowerCase() ===
+          editingClass.classCode.trim().toLowerCase(),
+    );
 
-    await updateClass(editingClass.classId, payload);
+    if (duplicated) {
+      toast.error("Update failed", {
+        description: "Class code already exists in this semester",
+      });
+      return;
+    }
 
-    setEditingClass(null);
-    await loadClasses();
+    try {
+      const payload = {
+        semesterId: Number(editingClass.semesterId),
+        classCode: editingClass.classCode,
+        lecturerUserId: editingClass.lecturerUserId,
+        status: editingClass.status,
+      };
+
+      await updateClass(editingClass.classId, payload);
+
+      setEditingClass(null);
+      await loadClasses();
+
+      toast.success("Class updated successfully");
+    } catch (err: any) {
+      toast.error(
+        err.response?.data?.message ||
+          "Update failed because class already exists",
+      );
+    }
   };
 
   /* ================= UI ================= */
@@ -121,7 +160,7 @@ export default function ClassManagementPage() {
           </Button>
 
           <h1 className="text-2xl font-semibold">
-            {semester ? `Classes - ${semester.name}` : "Classes"}
+            {semester ? `Classes - ${semester.code}` : "Classes"}
           </h1>
         </div>
 
@@ -146,7 +185,7 @@ export default function ClassManagementPage() {
       {/* TABLE */}
 
       <ClassTable
-        classes={classes}
+        classCode={classes}
         lecturers={allLecturers}
         onDelete={handleDeleteClass}
         onEdit={(c) => setEditingClass(c)}
@@ -159,36 +198,6 @@ export default function ClassManagementPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
           <div className="bg-white w-[420px] p-6 rounded-lg shadow-lg space-y-4">
             <h2 className="text-lg font-semibold">Edit Class</h2>
-
-            {/* CLASS NAME */}
-
-            <div>
-              <Label>Class Name</Label>
-              <Input
-                value={editingClass.className}
-                onChange={(e) =>
-                  setEditingClass({
-                    ...editingClass,
-                    className: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            {/* COURSE CODE */}
-
-            <div>
-              <Label>Course Code</Label>
-              <Input
-                value={editingClass.courseCode}
-                onChange={(e) =>
-                  setEditingClass({
-                    ...editingClass,
-                    courseCode: e.target.value,
-                  })
-                }
-              />
-            </div>
 
             {/* CLASS CODE */}
 

@@ -83,22 +83,37 @@ export default function IntegrationForm({ projectId }: Props) {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="h-[280px] animate-pulse" />
+        <Card className="h-[280px] animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid md:grid-cols-2 gap-6">
       {/* JIRA */}
-      <Card>
-        <CardHeader className="flex flex-row items-center gap-2">
-          <Link className="w-5 h-5 text-blue-500" />
-          <CardTitle>Jira Integration</CardTitle>
+      <Card className="shadow-sm hover:shadow-md transition">
+        <CardHeader className="flex flex-row items-center gap-3">
+          <div className="p-2 rounded-md bg-blue-100">
+            <Link className="w-5 h-5 text-blue-600" />
+          </div>
+
+          <div>
+            <CardTitle>Jira Integration</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Connect your Jira workspace to sync issues
+            </p>
+          </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           <div className="space-y-2">
             <Label>Base URL</Label>
             <Input
-              placeholder="https://your-domain.atlassian.net"
+              placeholder="Enter Jira base URL"
               value={baseUrl}
               onChange={(e) => setBaseUrl(e.target.value)}
             />
@@ -107,7 +122,7 @@ export default function IntegrationForm({ projectId }: Props) {
           <div className="space-y-2">
             <Label>Project Key</Label>
             <Input
-              placeholder="PROJ"
+              placeholder="Enter project key"
               value={projectKey}
               onChange={(e) => setProjectKey(e.target.value)}
             />
@@ -117,30 +132,43 @@ export default function IntegrationForm({ projectId }: Props) {
             <Label>API Token</Label>
             <Input
               type="password"
-              placeholder="Jira API Token"
+              placeholder="Enter API token"
               value={jiraToken}
               onChange={(e) => setJiraToken(e.target.value)}
             />
           </div>
 
-          <Button className="w-full" onClick={saveJira}>
+          <Button
+            variant="outline"
+            className="w-full flex items-center justify-center gap-2 bg-amber-400"
+            onClick={saveJira}
+          >
+            <Link className="w-4 h-4" />
             Save Jira Integration
           </Button>
         </CardContent>
       </Card>
 
       {/* GITHUB */}
-      <Card>
-        <CardHeader className="flex flex-row items-center gap-2">
-          <Github className="w-5 h-5" />
-          <CardTitle>GitHub Integration</CardTitle>
+      <Card className="shadow-sm hover:shadow-md transition">
+        <CardHeader className="flex flex-row items-center gap-3">
+          <div className="p-2 rounded-md bg-gray-100">
+            <Github className="w-5 h-5 text-black" />
+          </div>
+
+          <div>
+            <CardTitle>GitHub Integration</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Connect GitHub organization for repository sync
+            </p>
+          </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           <div className="space-y-2">
             <Label>Organization</Label>
             <Input
-              placeholder="your-github-org"
+              placeholder="Enter GitHub organization"
               value={githubOrg}
               onChange={(e) => setGithubOrg(e.target.value)}
             />
@@ -150,13 +178,18 @@ export default function IntegrationForm({ projectId }: Props) {
             <Label>Personal Access Token</Label>
             <Input
               type="password"
-              placeholder="GitHub Token"
+              placeholder="Enter GitHub personal access token"
               value={githubToken}
               onChange={(e) => setGithubToken(e.target.value)}
             />
           </div>
 
-          <Button className="w-full" onClick={saveGithub}>
+          <Button
+            className="w-full flex items-center justify-center gap-2 bg-amber-400"
+            variant="outline"
+            onClick={saveGithub}
+          >
+            <Github className="w-4 h-4" />
             Save GitHub Integration
           </Button>
         </CardContent>

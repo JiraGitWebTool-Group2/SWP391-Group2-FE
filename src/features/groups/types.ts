@@ -1,11 +1,12 @@
 export interface Group {
   groupId: number;
   groupName: string;
-  description?: string;
+  description: string;
   classId?: number;
   className?: string;
 
   createdAt?: string;
+  projectId?: number;
 }
 
 export interface CreateGroupRequest {

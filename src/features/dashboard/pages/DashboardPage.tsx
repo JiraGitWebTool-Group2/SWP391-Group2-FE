@@ -1,137 +1,98 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle2, Clock, AlertCircle, GitCommit } from "lucide-react";
+import {
+  Users,
+  FolderGit2,
+  GitBranch,
+  BarChart3,
+  GraduationCap,
+  LayoutDashboard,
+  ArrowRight,
+} from "lucide-react";
 
 export function DashboardPage() {
+  const features = [
+    {
+      title: "Class Management",
+      description: "Create and manage classes, assign lecturers and students.",
+      icon: <GraduationCap className="h-8 w-8 text-blue-600" />,
+    },
+    {
+      title: "Group Management",
+      description: "Organize students into groups inside each class.",
+      icon: <Users className="h-8 w-8 text-indigo-600" />,
+    },
+    {
+      title: "Project Management",
+      description: "Manage student projects and their repositories.",
+      icon: <FolderGit2 className="h-8 w-8 text-purple-600" />,
+    },
+    {
+      title: "Repository Tracking",
+      description: "Track commits and monitor repository activity.",
+      icon: <GitBranch className="h-8 w-8 text-emerald-600" />,
+    },
+    {
+      title: "Snapshots & Reports",
+      description: "Generate contribution reports for evaluation.",
+      icon: <BarChart3 className="h-8 w-8 text-orange-600" />,
+    },
+    {
+      title: "Dashboard Overview",
+      description: "Quick access to the main features of the system.",
+      icon: <LayoutDashboard className="h-8 w-8 text-pink-600" />,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-10 py-12 space-y-12">
-      {/* PAGE TITLE */}
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          Project Dashboard
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 px-12 py-14 space-y-14">
+      {/* HEADER */}
+
+      <div className="max-w-3xl space-y-4">
+        <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Lecturer Dashboard
         </h1>
+
+        <p className="text-slate-500 text-base leading-relaxed">
+          Welcome to the lecturer management system. From here you can manage
+          classes, organize student groups, track repositories and monitor
+          student contributions across projects.
+        </p>
       </div>
 
-      {/* FILTER SECTION */}
-      <Card className="rounded-3xl border-0 bg-white/70 backdrop-blur-xl shadow-lg p-6">
-        <div className="flex flex-wrap gap-4">
-          {["Select Project", "Select Sprint", "Select Member"].map(
-            (placeholder) => (
-              <Select key={placeholder}>
-                <SelectTrigger className="w-[220px] h-11 rounded-xl border-slate-200 focus:ring-2 focus:ring-blue-400 transition-all">
-                  <SelectValue placeholder={placeholder} />
-                </SelectTrigger>
-              </Select>
-            ),
-          )}
-        </div>
-      </Card>
+      {/* FEATURE GRID */}
 
-      {/* KPI CARDS */}
-      <div className="grid md:grid-cols-4 gap-6">
-        {[
-          {
-            title: "Completed Tasks",
-            icon: <CheckCircle2 className="text-emerald-500" />,
-          },
-          {
-            title: "In Progress",
-            icon: <Clock className="text-blue-500" />,
-          },
-          {
-            title: "Overdue Tasks",
-            icon: <AlertCircle className="text-red-500" />,
-          },
-          {
-            title: "Total Commits",
-            icon: <GitCommit className="text-purple-500" />,
-          },
-        ].map((item) => (
+      <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+        {features.map((feature) => (
           <Card
-            key={item.title}
-            className="rounded-3xl border-0 bg-white shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+            key={feature.title}
+            className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
           >
-            <CardContent className="p-6 flex justify-between items-center">
-              <div>
-                <p className="text-sm text-slate-500">{item.title}</p>
-                <div className="mt-3 h-8 w-20 bg-slate-100 rounded-lg" />
+            {/* subtle gradient hover */}
+
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-blue-50 via-white to-indigo-50" />
+
+            <CardHeader className="relative flex flex-row items-center gap-4">
+              <div className="p-3 rounded-xl bg-slate-100 group-hover:bg-white shadow-sm transition">
+                {feature.icon}
               </div>
-              <div className="text-4xl opacity-80">{item.icon}</div>
+
+              <CardTitle className="text-lg font-semibold text-slate-800">
+                {feature.title}
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="relative space-y-4">
+              <p className="text-sm text-slate-500 leading-relaxed">
+                {feature.description}
+              </p>
+
+              <div className="flex items-center text-sm font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition">
+                Explore feature
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition" />
+              </div>
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      {/* MAIN CONTENT */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* CHART */}
-        <Card className="rounded-3xl border-0 bg-white shadow-md hover:shadow-xl transition-all">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-700">
-              Task Distribution
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[260px] bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center text-slate-400">
-              Chart Area
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* PROGRESS */}
-        <Card className="rounded-3xl border-0 bg-white shadow-md hover:shadow-xl transition-all">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-700">
-              Sprint Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="flex justify-between text-sm text-slate-600">
-              <span>Overall Completion</span>
-              <span>--%</span>
-            </div>
-            <Progress value={0} className="h-3 rounded-full" />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* SECOND ROW */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* ACTIVITY */}
-        <Card className="rounded-3xl border-0 bg-white shadow-md hover:shadow-xl transition-all">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-700">
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="h-11 bg-slate-100 rounded-xl" />
-            <div className="h-11 bg-slate-100 rounded-xl" />
-            <div className="h-11 bg-slate-100 rounded-xl" />
-            <div className="h-11 bg-slate-100 rounded-xl" />
-          </CardContent>
-        </Card>
-
-        {/* MEMBER PERFORMANCE */}
-        <Card className="rounded-3xl border-0 bg-white shadow-md hover:shadow-xl transition-all">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-slate-700">
-              Member Performance
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {[1, 2, 3].map((item) => (
-              <div key={item}>
-                <div className="flex justify-between text-sm text-slate-600 mb-2">
-                  <span>Member</span>
-                  <span>--%</span>
-                </div>
-                <Progress value={0} className="h-2 rounded-full" />
-              </div>
-            ))}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

@@ -1,16 +1,16 @@
 import type { Class, AllLecturer } from "../types";
 
 interface Props {
-  classes: Class[];
-  lecturers: AllLecturer[];
+  classCode?: Class[];
+  lecturers?: AllLecturer[];
   onDelete: (id: number) => void;
   onEdit: (c: Class) => void;
   onView: (id: number) => void;
 }
 
 export default function ClassTable({
-  classes,
-  lecturers,
+  classCode = [],
+  lecturers = [],
   onDelete,
   onEdit,
   onView,
@@ -40,20 +40,21 @@ export default function ClassTable({
         <thead className="border-b bg-slate-50">
           <tr>
             <th className="text-left px-6 py-3 font-semibold text-slate-600">
-              Class
+              Class Code
             </th>
-            <th className="text-left px-6 py-3 font-semibold text-slate-600">
-              Course Code
-            </th>
+
             <th className="text-left px-6 py-3 font-semibold text-slate-600">
               Lecturer
             </th>
+
             <th className="text-left px-6 py-3 font-semibold text-slate-600">
               Status
             </th>
+
             <th className="text-left px-6 py-3 font-semibold text-slate-600">
               Actions
             </th>
+
             <th className="text-left px-6 py-3 font-semibold text-slate-600">
               View Detail
             </th>
@@ -63,7 +64,7 @@ export default function ClassTable({
         {/* BODY */}
 
         <tbody>
-          {classes.map((c) => {
+          {classCode.map((c) => {
             const lecturerName =
               c.lecturerUserId && lecturerMap[c.lecturerUserId]
                 ? lecturerMap[c.lecturerUserId]
@@ -74,15 +75,11 @@ export default function ClassTable({
                 key={c.classId}
                 className="border-b hover:bg-slate-50 transition"
               >
-                {/* CLASS */}
+                {/* CLASS CODE */}
 
                 <td className="px-6 py-4 font-medium text-slate-800">
-                  {c.className}
+                  {c.classCode}
                 </td>
-
-                {/* COURSE CODE */}
-
-                <td className="px-6 py-4 text-slate-600">{c.courseCode}</td>
 
                 {/* LECTURER */}
 
@@ -142,9 +139,9 @@ export default function ClassTable({
 
           {/* EMPTY */}
 
-          {classes.length === 0 && (
+          {classCode.length === 0 && (
             <tr>
-              <td colSpan={6} className="text-center py-10 text-gray-500">
+              <td colSpan={5} className="text-center py-10 text-gray-500">
                 No classes found
               </td>
             </tr>

@@ -1,13 +1,17 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from "../ui/navigation-menu";
+
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "../ui/mode-toggle";
 import { User, LayoutDashboard, LogOut } from "lucide-react";
+
 import { useAuthStore } from "@/stores/auth.store";
 import { authService } from "@/features/auth/services";
 import { useProjectStore } from "@/stores/project.store";
@@ -27,6 +31,15 @@ import {
 
 import { Button } from "../ui/button";
 
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "../ui/dropdown-menu";
+
 function Header() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,9 +49,27 @@ function Header() {
 
   const clearProject = useProjectStore((state) => state.clearProject);
 
+  // STATE USER FROM API
+  const [user, setUser] = useState<any>(null);
+
+  // CALL API /getMe
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await authService.getMe();
+        console.log(res.data);
+        setUser(res.data); // lấy data từ AxiosResponse
+      } catch (error) {
+        console.log("Get user failed", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const navItems = [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "Groups", path: "/groups" },
+    { name: "Classes", path: "/classes" },
     { name: "Sync", path: "/sync" },
     { name: "Tasks", path: "/tasks" },
     { name: "SRS", path: "/srs" },
@@ -72,8 +103,9 @@ function Header() {
           SWP391 Tracker
         </Link>
 
-        {/* NAVIGATION */}
+        {/* RIGHT SIDE */}
         <div className="flex items-center gap-8">
+          {/* NAVIGATION */}
           <NavigationMenu>
             {navItems.map((item) => {
               const isActive = location.pathname.startsWith(item.path);
@@ -99,7 +131,7 @@ function Header() {
             })}
           </NavigationMenu>
 
-          {/* LOGOUT */}
+          {/* LOGOUT BUTTON */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
@@ -112,7 +144,7 @@ function Header() {
               </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="rounded-xl">
+            <AlertDialogContent className="rounded-xl bg-white dark:bg-slate-800">
               <AlertDialogHeader>
                 <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
 
@@ -140,19 +172,45 @@ function Header() {
 
           {/* PROFILE + THEME */}
           <div className="flex items-center gap-4">
-            <Link
-              to="/profile"
-              className="
-              flex items-center justify-center
-              w-9 h-9 rounded-full
-              bg-gradient-to-r from-blue-500 to-indigo-500
-              text-white shadow-sm
-              hover:scale-105 transition
-              "
-            >
-              <User size={18} />
-            </Link>
+            {/* USER DROPDOWN */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="
+                  flex items-center justify-center
+                  w-9 h-9 rounded-full
+                  bg-gradient-to-r from-blue-500 to-indigo-500
+                  text-white shadow-sm
+                  hover:scale-105 transition
+                  "
+                >
+                  {user?.fullName?.charAt(0).toUpperCase() || (
+                    <User size={18} />
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-72 p-2 rounded-xl shadow-xl"
+              >
+                <DropdownMenuLabel className="flex flex-col gap-1">
+                  <span className="font-semibold text-sm">
+                    {user?.fullName}
+                  </span>
+                  <span className="text-xs text-slate-500">{user?.email}</span>
+                </DropdownMenuLabel>
 
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem className="text-sm">
+                  Role: {user?.role}
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* DARK MODE */}
             <ModeToggle />
           </div>
         </div>

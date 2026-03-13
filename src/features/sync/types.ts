@@ -27,4 +27,11 @@ export interface IntegratedGroup {
   groupName: string;
   projectId: number;
   projectName: string;
+  classId: number;
+  className: string;
+}
+
+export interface Class {
+  classId: number;
+  classCode: string;
 }

@@ -12,6 +12,21 @@ export default function CreateUserForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // validate email theo role
+    if (role === "LECTURER" && !email.endsWith("@fpt.edu.vn")) {
+      toast.error("Lecturer email must be @fpt.edu.vn");
+      return;
+    }
+
+    if (
+      role === "STUDENT" &&
+      !email.endsWith("@gmail.com") &&
+      !email.endsWith("@fpt.edu.vn")
+    ) {
+      toast.error("Student email must be @gmail.com or @fpt.edu.vn");
+      return;
+    }
+
     const toastId = toast.loading("Creating user...");
 
     try {
@@ -20,7 +35,7 @@ export default function CreateUserForm() {
       await createUser({
         email,
         fullName,
-        // password: "defaultpassword",
+        password: "default password",
         role: role as UserRole,
       });
 
@@ -44,7 +59,9 @@ export default function CreateUserForm() {
 
   return (
     <div className="bg-white shadow-md rounded-xl p-8 border">
-      <h2 className="text-xl font-bold mb-6 text-center">Add User</h2>
+      <h2 className="text-xl font-bold mb-6 text-center">
+        Add Student and Lecturer
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Email */}

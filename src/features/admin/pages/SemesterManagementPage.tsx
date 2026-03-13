@@ -5,6 +5,7 @@ import CreateSemesterForm from "../components/CreateSemesterForm";
 import EditSemesterForm from "../components/EditSemesterForm";
 import type { Semester } from "../types";
 import { deleteSemester, getSemesters } from "../services";
+import { toast } from "sonner";
 
 export default function SemesterManagementPage() {
   const navigate = useNavigate();
@@ -46,9 +47,18 @@ export default function SemesterManagementPage() {
 
     try {
       await deleteSemester(id);
+      toast.success("Semester deleted");
       loadSemesters();
-    } catch (err) {
-      console.error("Delete failed", err);
+    } catch (error: any) {
+      console.error(error);
+
+      if (error.response?.status === 409) {
+        toast.error("Cannot delete semester because it already has classes");
+      } else {
+        toast.error(
+          "Delete Semester failed because this semester already has classes",
+        );
+      }
     }
   };
 
@@ -58,7 +68,10 @@ export default function SemesterManagementPage() {
         <h1 className="text-2xl font-semibold">Semester Management</h1>
 
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setEditingSemester(null); // tắt edit nếu đang edit
+            setShowForm(true);
+          }}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Add Semester
@@ -69,9 +82,13 @@ export default function SemesterManagementPage() {
         semesters={semesters}
         onClickSemester={handleClickSemester}
         onDeleteSemester={handleDeleteSemester}
-        onEditSemester={setEditingSemester}
+        onEditSemester={(semester) => {
+          setShowForm(false); // ❗ tắt create form
+          setEditingSemester(semester);
+        }}
       />
 
+      {/* CREATE FORM */}
       {showForm && (
         <CreateSemesterForm
           onClose={() => setShowForm(false)}
@@ -79,6 +96,7 @@ export default function SemesterManagementPage() {
         />
       )}
 
+      {/* EDIT FORM */}
       {editingSemester && (
         <EditSemesterForm
           semester={editingSemester}

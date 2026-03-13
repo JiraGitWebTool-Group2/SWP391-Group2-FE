@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { getGroups, createGroup, createProjectInGroup } from "../services";
-import type { Group } from "../types";
+import type { Group } from "@/features/groups/types";
+import {
+  createGroup,
+  createProjectInGroup,
+  getGroups,
+} from "@/features/groups/services";
+import { useAuthStore } from "@/stores/auth.store";
 
 export default function GroupTable() {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -19,7 +24,7 @@ export default function GroupTable() {
   const [jiraKey, setJiraKey] = useState("");
   const [githubOrg, setGithubOrg] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
-
+  const user = useAuthStore((s) => s.user);
   useEffect(() => {
     loadGroups();
   }, []);
@@ -132,13 +137,14 @@ export default function GroupTable() {
 
             <Button
               onClick={async () => {
-                if (!selectedGroupId) return;
+                if (!selectedGroupId || !user) return;
 
                 await createProjectInGroup(selectedGroupId, {
                   projectName,
-                  jiraProjectKey: jiraKey,
+                  jiraKey,
                   githubOrg,
                   description: projectDescription,
+                  createdByUserId: user?.userId ?? 0,
                 });
 
                 setProjectName("");

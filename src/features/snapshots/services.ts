@@ -21,3 +21,5 @@ export const getSnapshotDailySummary = async (
   const res = await api.get(`/snapshots/${snapshotId}/daily-summary`);
   return res.data;
 };
+
+//api của jira

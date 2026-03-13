@@ -146,14 +146,7 @@ export default function GroupListPage() {
       {/* HEADER */}
 
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold text-blue-600">
-            Groups Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage student groups and projects
-          </p>
-        </div>
+        <h1 className="text-4xl font-bold text-blue-600">Groups Management</h1>
 
         {isLecturer && (
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -235,7 +228,7 @@ export default function GroupListPage() {
                   Class: {group.className || group.classId || "None"}
                 </p>
 
-                <p>Description: {group.description || "--"}</p>
+                {/* <p>Description: {group.description || "--"}</p> */}
 
                 {group.createdAt && (
                   <p className="text-muted-foreground">
@@ -249,6 +242,11 @@ export default function GroupListPage() {
                     <Link to={`/groups/${group.groupId}`}>View</Link>
                   </Button>
 
+                  <Button asChild size="sm" variant="secondary">
+                    <Link to={`/groups/${group.groupId}/dashboard`}>
+                      Dashboard
+                    </Link>
+                  </Button>
                   {isLecturer && (
                     <Button
                       size="sm"

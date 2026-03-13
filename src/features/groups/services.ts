@@ -55,6 +55,15 @@ export const getClasses = async () => {
   const res = await api.get("/classes");
   return res.data;
 };
+export const getClassById = async (id: number) => {
+  const res = await api.get(`/classes/${id}`);
+  return res.data;
+};
+
+export const getGroupsByClass = async (classId: number) => {
+  const res = await api.get(`/classes/${classId}/groups`);
+  return res.data;
+};
 
 /* ================= STUDENTS ================= */
 
