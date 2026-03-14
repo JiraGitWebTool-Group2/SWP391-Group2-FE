@@ -26,6 +26,7 @@ import {
 } from "../services";
 
 import type { Group } from "../types";
+import { toast } from "sonner";
 
 export default function ClassDetailPage() {
   const { classId } = useParams();
@@ -73,8 +74,19 @@ export default function ClassDetailPage() {
   }, [classId]);
 
   const handleCreateSubmit = async () => {
-    if (!newGroupName) {
-      alert("Please input group name");
+    if (!newGroupName.trim()) {
+      toast.warning("Please input group name");
+      return;
+    }
+
+    // kiểm tra trùng tên
+    const isDuplicate = groups.some(
+      (g) =>
+        g.groupName.toLowerCase().trim() === newGroupName.toLowerCase().trim(),
+    );
+
+    if (isDuplicate) {
+      toast.error("Group name already exists in this class");
       return;
     }
 
@@ -87,6 +99,8 @@ export default function ClassDetailPage() {
         classId: Number(classId),
       });
 
+      toast.success("Group created successfully");
+
       setNewGroupName("");
       setNewDescription("");
       setIsDialogOpen(false);
@@ -94,7 +108,7 @@ export default function ClassDetailPage() {
       fetchGroups();
     } catch (err) {
       console.error(err);
-      alert("Create group failed");
+      toast.error("Create group failed");
     } finally {
       setIsCreating(false);
     }

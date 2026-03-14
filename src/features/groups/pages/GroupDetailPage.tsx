@@ -40,6 +40,7 @@ export default function GroupDetailPage() {
   const [jiraKey, setJiraKey] = useState("");
   const [githubOrg, setGithubOrg] = useState("");
   const [description, setDescription] = useState("");
+  const [requirement, setRequirement] = useState("");
 
   useEffect(() => {
     if (!groupId) return;
@@ -118,10 +119,9 @@ export default function GroupDetailPage() {
     try {
       await createProjectInGroup(Number(groupId), {
         projectName,
-        jiraKey,
-        githubOrg,
         description,
-        createdByUserId: user.userId,
+        requirement,
+        // createdByUserId: user.userId,
       });
 
       await loadProjects();
@@ -285,21 +285,14 @@ export default function GroupDetailPage() {
           />
 
           <Input
-            placeholder="Jira Key"
-            value={jiraKey}
-            onChange={(e) => setJiraKey(e.target.value)}
-          />
-
-          <Input
-            placeholder="Github Org"
-            value={githubOrg}
-            onChange={(e) => setGithubOrg(e.target.value)}
-          />
-
-          <Input
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+          />
+          <Input
+            placeholder="Requiment"
+            value={requirement}
+            onChange={(e) => setRequirement(e.target.value)}
           />
 
           <Button onClick={handleCreateProject}>Create Project</Button>

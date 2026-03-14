@@ -20,7 +20,7 @@ const LoginForm = () => {
       <div className="relative flex items-center gap-24">
         {/* LEFT IMAGE */}
         <motion.img
-          src="https://foundations.projectpythia.org/build/GitHub-logo-a2d114536188dce05072c143cdbcfa9f.png"
+          src="https://i.ytimg.com/vi/OEGm7LXAN_c/maxresdefault.jpg"
           alt="github"
           className="w-44 opacity-80"
           initial={{ opacity: 0, x: -40 }}

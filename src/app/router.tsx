@@ -50,6 +50,7 @@ import DashboardPageDetail from "@/features/dashboard/pages/DashboardPageDetail"
 import ClassListPage from "@/features/groups/pages/ClassListPage";
 import ClassDetailPage from "@/features/groups/pages/ClassDetailPage";
 import { UserProfilePage } from "@/features/user/pages/UserProfilePage";
+import GroupProjectPage from "@/features/groups/pages/GroupProjectPage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
@@ -160,6 +161,7 @@ export const router = createBrowserRouter([
         path: "groups/:groupId/dashboard",
         element: <DashboardPageDetail />,
       },
+
       {
         path: "sync",
         element: <SyncPage />,
@@ -177,6 +179,10 @@ export const router = createBrowserRouter([
       {
         element: <RequireUser allowedRoles={["STUDENT"]} />,
         children: [
+          {
+            path: "project",
+            element: <GroupProjectPage />,
+          },
           {
             path: "tasks",
             element: <TaskBoardPage />,

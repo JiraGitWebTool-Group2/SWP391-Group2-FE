@@ -1,31 +1,59 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getIntegratedGroups, startSync } from "../services";
 
+import { getIntegratedGroups, startSync, getMyGroup } from "../services";
 import SyncForm from "../components/SyncForm";
-import type { IntegratedGroup, CreateSyncRunRequest } from "../types";
+
+import type { IntegratedGroup, CreateSyncRunRequest, MyGroup } from "../types";
+
 import { toast } from "sonner";
 
 export default function SyncPage() {
   const [groups, setGroups] = useState<IntegratedGroup[]>([]);
+  const [classes, setClasses] = useState<
+    { classId: number; className: string }[]
+  >([]);
+  const [selectedClass, setSelectedClass] = useState<number | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<IntegratedGroup | null>(
     null,
   );
+  const [myGroup, setMyGroup] = useState<MyGroup | null>(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchData = async () => {
       try {
+        const group = await getMyGroup();
+
+        setMyGroup(group);
+
+        setSelectedGroup({
+          groupId: group.groupId,
+          groupName: group.groupName,
+          projectId: group.groupId,
+          projectName: "",
+          classId: 0,
+          className: "",
+        });
+      } catch {
         const data = await getIntegratedGroups();
         setGroups(data);
-      } catch (err) {
-        console.error(err);
-        toast.error("Không tải được danh sách group");
+
+        const uniqueClasses = [
+          ...new Map(
+            data.map((g) => [
+              g.classId,
+              { classId: g.classId, className: g.className },
+            ]),
+          ).values(),
+        ];
+
+        setClasses(uniqueClasses);
       }
     };
 
-    fetchGroups();
+    fetchData();
   }, []);
 
   const handleStartSync = async (
@@ -48,32 +76,68 @@ export default function SyncPage() {
     }
   };
 
+  const filteredGroups = groups.filter((g) => g.classId === selectedClass);
+
   return (
     <div className="p-10 max-w-2xl mx-auto">
-      {/* Select Group */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Select Group</label>
+      {/* Lecturer */}
+      {!myGroup && (
+        <>
+          <div className="mb-6">
+            <label className="block mb-2 font-medium">Select Class</label>
 
-        <select
-          className="w-full border rounded-lg p-2"
-          onChange={(e) => {
-            const group = groups.find(
-              (g) => g.groupId === Number(e.target.value),
-            );
-            setSelectedGroup(group || null);
-          }}
-        >
-          <option value="">Choose group</option>
+            <select
+              className="w-full border rounded-lg p-2"
+              onChange={(e) => {
+                setSelectedClass(Number(e.target.value));
+                setSelectedGroup(null);
+              }}
+            >
+              <option value="">Choose class</option>
 
-          {groups.map((g) => (
-            <option key={g.groupId} value={g.groupId}>
-              {g.groupName} - {g.projectName}
-            </option>
-          ))}
-        </select>
-      </div>
+              {classes.map((c) => (
+                <option key={c.classId} value={c.classId}>
+                  {c.className}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {/* Sync Form */}
+          {selectedClass && (
+            <div className="mb-6">
+              <label className="block mb-2 font-medium">Select Group</label>
+
+              <select
+                className="w-full border rounded-lg p-2"
+                onChange={(e) => {
+                  const group = groups.find(
+                    (g) => g.groupId === Number(e.target.value),
+                  );
+
+                  setSelectedGroup(group || null);
+                }}
+              >
+                <option value="">Choose group</option>
+
+                {filteredGroups.map((g) => (
+                  <option key={g.groupId} value={g.groupId}>
+                    {g.groupName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Student */}
+      {myGroup && (
+        <div className="mb-6 text-sm text-gray-600">
+          Your group: <b>{myGroup.groupName}</b>
+        </div>
+      )}
+
+      {/* Sync form */}
       {selectedGroup && <SyncForm onSubmit={handleStartSync} />}
     </div>
   );
