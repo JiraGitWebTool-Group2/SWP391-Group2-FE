@@ -17,19 +17,17 @@ export interface CreateGroupRequest {
 export interface Project {
   projectId: number;
   projectName: string;
+  description?: string;
+  requirement?: string;
   jiraProjectKey?: string;
   githubOrg?: string;
-  description?: string;
 }
 
 export interface CreateProjectRequest {
   projectName: string;
-  jiraKey: string;
-  githubOrg: string;
-  description: string;
-  createdByUserId: number;
+  description?: string;
+  requirement?: string;
 }
-
 /* STUDENT IN GROUP */
 
 export interface GroupStudent {

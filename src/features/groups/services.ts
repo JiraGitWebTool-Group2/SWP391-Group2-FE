@@ -40,6 +40,10 @@ export const getProjectsByGroup = async (
   const res = await api.get(`/groups/${groupId}/projects`);
   return res.data;
 };
+export const getMyGroup = async () => {
+  const res = await api.get("/Users/me/group");
+  return res.data;
+};
 
 export const createProjectInGroup = async (
   groupId: number,
@@ -49,8 +53,31 @@ export const createProjectInGroup = async (
   return res.data;
 };
 
+export const configureIntegration = async (
+  groupId: number,
+  projectId: number,
+  payload: {
+    jiraProjectKey: string;
+    githubOrg: string;
+  },
+) => {
+  const res = await api.put(
+    `/groups/${groupId}/projects/${projectId}/integration`,
+    payload,
+  );
+
+  return res.data;
+};
+
 /* ================= CLASSES ================= */
 
+export const getClassesOfSemester = async (semesterId: number) => {
+  const res = await api.get("/classes", {
+    params: { semesterId },
+  });
+
+  return res.data;
+};
 export const getClasses = async () => {
   const res = await api.get("/classes");
   return res.data;
@@ -62,6 +89,11 @@ export const getClassById = async (id: number) => {
 
 export const getGroupsByClass = async (classId: number) => {
   const res = await api.get(`/classes/${classId}/groups`);
+  return res.data;
+};
+
+export const getClassesOfLecturer = async (lecturerId: number) => {
+  const res = await api.get(`/lecturers/${lecturerId}/classes`);
   return res.data;
 };
 
@@ -97,5 +129,10 @@ export const removeStudentFromGroup = async (
 
 export const getStudentsOfClass = async (classId: number) => {
   const res = await api.get(`/classes/${classId}/students`);
+  return res.data;
+};
+
+export const getLecturerById = async (lecturerId: number) => {
+  const res = await api.get(`/lecturers/${lecturerId}`);
   return res.data;
 };

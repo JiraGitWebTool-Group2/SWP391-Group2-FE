@@ -4,6 +4,8 @@ import { useAuthStore } from "@/stores/auth.store";
 import { authService } from "../services";
 import type { CredentialResponse } from "@react-oauth/google";
 import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
+import type { MyJwtPayload } from "../types";
 
 interface UseGoogleLoginReturn {
   handleGoogleSuccess: (
@@ -53,14 +55,25 @@ export const useGoogleLogin = (): UseGoogleLoginReturn => {
       // 1. Chỉ lấy accessToken và refreshToken từ backend
       const { accessToken, refreshToken } = response.data;
 
+      const decoded = jwtDecode<MyJwtPayload>(accessToken);
+
+      const userId =
+        typeof decoded.userId === "number"
+          ? decoded.userId
+          : Number(decoded.sub);
+
+      const email = decoded.email ?? "";
+      const name = decoded.name ?? "User";
+
       // 2. SỬ DỤNG ROLE TỪ THAM SỐ CỦA HÀM (do form truyền vào) thay vì đợi backend
       const roleUpper = role.toUpperCase();
 
       // 3. Lưu vào store
       login(accessToken, refreshToken, {
+        userId,
         systemRole: roleUpper,
-        email: "", // Tạm để rỗng vì backend không trả về
-        name: "User", // Tạm để mặc định vì backend không trả về
+        email, // Tạm để rỗng vì backend không trả về
+        name, // Tạm để mặc định vì backend không trả về
       });
 
       toast.success("Login successful");
