@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getIntegratedGroups, startSync } from "../services";
 
+import { getIntegratedGroups, startSync, getMyGroup } from "../services";
 import SyncForm from "../components/SyncForm";
-import type { IntegratedGroup, CreateSyncRunRequest } from "../types";
+
+import type { IntegratedGroup, CreateSyncRunRequest, MyGroup } from "../types";
+
 import { toast } from "sonner";
 
 export default function SyncPage() {
@@ -15,21 +17,43 @@ export default function SyncPage() {
   const [selectedGroup, setSelectedGroup] = useState<IntegratedGroup | null>(
     null,
   );
+  const [myGroup, setMyGroup] = useState<MyGroup | null>(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchData = async () => {
       try {
+        const group = await getMyGroup();
+
+        setMyGroup(group);
+
+        setSelectedGroup({
+          groupId: group.groupId,
+          groupName: group.groupName,
+          projectId: group.groupId,
+          projectName: "",
+          classId: 0,
+          className: "",
+        });
+      } catch {
         const data = await getIntegratedGroups();
         setGroups(data);
-      } catch (err) {
-        console.error(err);
-        toast.error("Không tải được danh sách group");
+
+        const uniqueClasses = [
+          ...new Map(
+            data.map((g) => [
+              g.classId,
+              { classId: g.classId, className: g.className },
+            ]),
+          ).values(),
+        ];
+
+        setClasses(uniqueClasses);
       }
     };
 
-    fetchGroups();
+    fetchData();
   }, []);
 
   const handleClassChange = (classId: number | null) => {

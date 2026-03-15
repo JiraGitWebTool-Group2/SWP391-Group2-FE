@@ -39,3 +39,8 @@ export interface Class {
   classId: number;
   classCode: string;
 }
+export interface MyGroup {
+  groupId: number;
+  groupName: string;
+  roleId: number;
+}

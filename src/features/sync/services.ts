@@ -30,3 +30,8 @@ export const classService = {
     return res.data;
   },
 };
+
+export const getMyGroup = async () => {
+  const res = await api.get("/users/me/group");
+  return res.data;
+};
