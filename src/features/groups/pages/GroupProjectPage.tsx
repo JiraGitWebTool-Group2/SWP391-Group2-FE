@@ -1,35 +1,27 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import {
-  getProjectsByGroup,
-  configureIntegration,
-  getMyGroup,
-} from "../services";
+import { getProjectsByGroup, getMyGroup } from "../services";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function GroupProjectPage() {
-  const { groupId } = useParams();
+  const navigate = useNavigate();
 
   const [project, setProject] = useState<any>(null);
-  const [jiraKey, setJiraKey] = useState("");
-  const [githubOrg, setGithubOrg] = useState("");
+  const [group, setGroup] = useState<any>(null);
 
   useEffect(() => {
     const loadProject = async () => {
-      const group = await getMyGroup();
       try {
-        const projects = await getProjectsByGroup(group.groupId);
+        const g = await getMyGroup();
+        setGroup(g);
+
+        const projects = await getProjectsByGroup(g.groupId);
 
         if (projects.length > 0) {
-          const p = projects[0];
-
-          setProject(p);
-          setJiraKey(p.jiraProjectKey || "");
-          setGithubOrg(p.githubOrg || "");
+          setProject(projects[0]);
         }
       } catch (err) {
         console.error(err);
@@ -37,55 +29,58 @@ export default function GroupProjectPage() {
     };
 
     loadProject();
-  }, [groupId]);
-
-  const handleSave = async () => {
-    try {
-      await configureIntegration(Number(groupId), project.projectId, {
-        jiraProjectKey: jiraKey,
-        githubOrg: githubOrg,
-      });
-
-      toast.success("Integration saved");
-    } catch (err) {
-      toast.error("Save failed");
-    }
-  };
+  }, []);
 
   if (!project) return <div>No project</div>;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Project Information</h1>
+    <div className="p-8 space-y-6 max-w-3xl mx-auto">
+      {/* ===== GROUP NAME ===== */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Class : {group?.classCode}</CardTitle>
+        </CardHeader>
 
-      <div className="space-y-2">
-        <p>
-          <b>Name:</b> {project.projectName}
-        </p>
-        <p>
-          <b>Description:</b> {project.description}
-        </p>
-        <p>
-          <b>Requirement:</b> {project.requirement}
-        </p>
-      </div>
+        <CardContent>Lecturer : {group?.lecturerName}</CardContent>
+        <CardContent>Group : {group?.groupName}</CardContent>
+      </Card>
 
-      <div className="border rounded-xl p-6 space-y-4">
-        <h2 className="font-semibold">Integration</h2>
+      {/* ===== PROJECT INFO ===== */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Project Information</CardTitle>
+        </CardHeader>
 
-        <Input
-          placeholder="Jira Project Key"
-          value={jiraKey}
-          onChange={(e) => setJiraKey(e.target.value)}
-        />
+        <CardContent className="space-y-2">
+          <p>
+            <b>Name:</b> {project.projectName}
+          </p>
 
-        <Input
-          placeholder="Github Organization"
-          value={githubOrg}
-          onChange={(e) => setGithubOrg(e.target.value)}
-        />
+          <p>
+            <b>Description:</b> {project.description}
+          </p>
 
-        <Button onClick={handleSave}>Save Integration</Button>
+          <p>
+            <b>Requirement:</b> {project.requirement || "No requirement"}
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* ===== ACTION BUTTONS ===== */}
+      <div className="flex gap-4 justify-center">
+        <Button
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => navigate(`/projects/${project.projectId}/integration`)}
+        >
+          Integration
+        </Button>
+
+        <Button
+          className="bg-green-600 hover:bg-green-700"
+          onClick={() => navigate(`/projects/${project.projectId}/repository`)}
+        >
+          Repository
+        </Button>
       </div>
     </div>
   );

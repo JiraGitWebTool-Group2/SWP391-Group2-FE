@@ -97,7 +97,8 @@ function Header() {
     { name: "Reports", path: "/reports", icon: BarChart },
   ];
 
-  const navItems = user?.role === "LECTURER" ? lecturerNav : studentNav;
+  const navItems =
+    user && user.system_Role === "LECTURER" ? lecturerNav : studentNav;
 
   // ================= LOGOUT =================
 
@@ -230,7 +231,7 @@ function Header() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem className="text-sm">
-                  Role: {user?.role}
+                  Role: {user?.system_Role}
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

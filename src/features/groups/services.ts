@@ -53,21 +53,38 @@ export const createProjectInGroup = async (
   return res.data;
 };
 
-export const configureIntegration = async (
+export const updateProject = async (
   groupId: number,
   projectId: number,
-  payload: {
-    jiraProjectKey: string;
-    githubOrg: string;
-  },
-) => {
+  payload: CreateProjectRequest,
+): Promise<Project> => {
   const res = await api.put(
-    `/groups/${groupId}/projects/${projectId}/integration`,
+    `/groups/${groupId}/projects/${projectId}`,
     payload,
   );
-
   return res.data;
 };
+
+export const deleteProject = async (groupId: number, projectId: number) => {
+  const res = await api.delete(`/groups/${groupId}/projects/${projectId}`);
+  return res.data;
+};
+
+// export const configureIntegration = async (
+//   groupId: number,
+//   projectId: number,
+//   payload: {
+//     jiraProjectKey: string;
+//     githubOrg: string;
+//   },
+// ) => {
+//   const res = await api.put(
+//     `/groups/${groupId}/projects/${projectId}/integration`,
+//     payload,
+//   );
+
+//   return res.data;
+// };
 
 /* ================= CLASSES ================= */
 

@@ -25,10 +25,14 @@ export interface SyncRunDetail {
 export interface IntegratedGroup {
   groupId: number;
   groupName: string;
+
+  classId: number;
+  classCode: string;
+
   projectId: number;
   projectName: string;
-  classId: number;
-  className: string;
+
+  integrations: string[];
 }
 
 export interface Class {

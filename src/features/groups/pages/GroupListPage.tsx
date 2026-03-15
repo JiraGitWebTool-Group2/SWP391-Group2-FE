@@ -110,7 +110,6 @@ export default function GroupListPage() {
     setEditClassId(String(group.classId || ""));
     setIsEditOpen(true);
   };
-
   const handleUpdateGroup = async () => {
     if (!editingGroup) return;
 
@@ -303,7 +302,6 @@ export default function GroupListPage() {
             <Button variant="destructive" onClick={handleDeleteGroup}>
               Delete
             </Button>
-
             <Button onClick={handleUpdateGroup}>Save</Button>
           </DialogFooter>
         </DialogContent>

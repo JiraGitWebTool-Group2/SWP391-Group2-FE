@@ -1,6 +1,6 @@
 export interface User {
   userId: number;
-  systemRole: string;
+  system_Role: string;
   email: string;
   name: string;
 }

@@ -4,7 +4,6 @@ export interface Group {
   description: string;
   classId?: number;
   className?: string;
-
   createdAt?: string;
   projectId?: number;
 }
@@ -16,14 +15,14 @@ export interface CreateGroupRequest {
 }
 export interface Project {
   projectId: number;
+  projectCode: string;
   projectName: string;
   description?: string;
   requirement?: string;
-  jiraProjectKey?: string;
-  githubOrg?: string;
 }
 
 export interface CreateProjectRequest {
+  projectCode: string;
   projectName: string;
   description?: string;
   requirement?: string;
