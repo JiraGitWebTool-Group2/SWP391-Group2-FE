@@ -19,13 +19,14 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
-import type { Class, CreateSyncRunRequest } from "../types";
+import type { CreateSyncRunRequest } from "../types";
 
 interface Props {
+  integrations: string[];
   onSubmit: (payload: Omit<CreateSyncRunRequest, "projectId">) => Promise<void>;
 }
 
-export default function SyncForm({ onSubmit }: Props) {
+export default function SyncForm({ integrations, onSubmit }: Props) {
   const [includeJira, setIncludeJira] = useState(false);
   const [includeGithub, setIncludeGithub] = useState(false);
 
@@ -35,8 +36,7 @@ export default function SyncForm({ onSubmit }: Props) {
 
   const [sprintId, setSprintId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [selectedClass, setSelectedClass] = useState<number | null>(null);
+
   const handleSubmit = async () => {
     if (!includeJira && !includeGithub) {
       toast.error("Please select at least one data source");
@@ -95,6 +95,7 @@ export default function SyncForm({ onSubmit }: Props) {
 
               <button
                 type="button"
+                disabled={!integrations.includes("JIRA")}
                 onClick={() => setIncludeJira((prev) => !prev)}
                 className={cn(
                   "relative rounded-2xl border p-6 transition-all hover:shadow-xl hover:-translate-y-0.5",
@@ -126,6 +127,7 @@ export default function SyncForm({ onSubmit }: Props) {
 
               <button
                 type="button"
+                disabled={!integrations.includes("GITHUB")}
                 onClick={() => setIncludeGithub((prev) => !prev)}
                 className={cn(
                   "relative rounded-2xl border p-6 transition-all hover:shadow-xl hover:-translate-y-0.5",

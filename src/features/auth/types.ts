@@ -1,20 +1,13 @@
-// export interface LoginRequest {
-//   email: string;
-//   password: string;
-// }
+export interface User {
+  userId: number;
+  system_Role: string;
+  email: string;
+  name: string;
+}
 
-// export interface GoogleLoginRequest {
-//   idToken: string;
-// }
-
-// export interface TokenResponse {
-//   accessToken: string;
-//   refreshToken: string;
-// }
-
-// export interface MeResponse {
-//   userId: number;
-//   email: string;
-//   fullName: string;
-//   provider?: string;
-// }
+export interface MyJwtPayload {
+  userId?: number;
+  sub?: string | number;
+  email?: string;
+  name?: string;
+}

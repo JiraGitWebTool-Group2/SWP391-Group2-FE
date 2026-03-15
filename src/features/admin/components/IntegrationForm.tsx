@@ -55,6 +55,10 @@ export default function IntegrationForm({ projectId }: Props) {
   }, [projectId]);
 
   const saveJira = async () => {
+    if (!baseUrl || !projectKey || !jiraToken) {
+      toast.error("All Jira fields are required");
+      return;
+    }
     try {
       await updateIntegration(projectId, {
         provider: "JIRA",
@@ -70,6 +74,10 @@ export default function IntegrationForm({ projectId }: Props) {
   };
 
   const saveGithub = async () => {
+    if (!githubOrg || !githubToken) {
+      toast.error("All GitHub fields are required");
+      return;
+    }
     try {
       await updateIntegration(projectId, {
         provider: "GITHUB",

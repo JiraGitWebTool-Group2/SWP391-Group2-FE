@@ -24,7 +24,6 @@ import LecturerDetailPage from "@/features/admin/pages/LecturerDetailPage";
 import LoginPage from "@/features/auth/pages/LoginPage";
 
 // ===== USER PAGES =====
-
 import GroupListPage from "@/features/groups/pages/GroupListPage";
 import GroupDetailPage from "@/features/groups/pages/GroupDetailPage";
 import { TaskBoardPage } from "@/features/tasks/pages/TaskBoardPage";
@@ -43,13 +42,18 @@ import ReportManagementPage from "@/features/report/pages/ReportManagementPage";
 import ReportEditorPage from "@/features/report/pages/ReportEditorPage";
 import ReportReviewPage from "@/features/report/pages/ReportReviewPage";
 import ProgressReportPage from "@/features/report/pages/ProgressReportPage";
+
 import RequireAdmin from "@/components/guards/RequireAdmin";
 import RepositoryPage from "@/features/admin/pages/RepositoryPage";
+
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import DashboardPageDetail from "@/features/dashboard/pages/DashboardPageDetail";
+
 import ClassListPage from "@/features/groups/pages/ClassListPage";
 import ClassDetailPage from "@/features/groups/pages/ClassDetailPage";
+
 import { UserProfilePage } from "@/features/user/pages/UserProfilePage";
+import GroupProjectPage from "@/features/groups/pages/GroupProjectPage";
 
 export const router = createBrowserRouter([
   // ================= LOGIN =================
@@ -104,12 +108,6 @@ export const router = createBrowserRouter([
         element: <RepositoryPage />,
       },
 
-      // ===== GROUP DASHBOARD =====
-      // {
-      //   path: "groups/:groupId/dashboard",
-      //   element: <AdminGroupDashboardPage />,
-      // },
-
       // ===== LECTURERS =====
       {
         path: "lecturers",
@@ -139,7 +137,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
 
-      // ================= CÁC TRANG CHUNG (Ai cũng truy cập được) =================
+      // ================= COMMON =================
       {
         path: "dashboard",
         element: <DashboardPage />,
@@ -160,6 +158,7 @@ export const router = createBrowserRouter([
         path: "groups/:groupId/dashboard",
         element: <DashboardPageDetail />,
       },
+
       {
         path: "sync",
         element: <SyncPage />,
@@ -173,14 +172,29 @@ export const router = createBrowserRouter([
         element: <SnapshotDetailPage />,
       },
 
-      // ================= CÁC TRANG DÀNH RIÊNG CHO STUDENT =================
+      // ===== PROJECT (STUDENT ACCESS) =====
+      {
+        path: "projects/:projectId/integration",
+        element: <IntegrationConfigPage />,
+      },
+      {
+        path: "projects/:projectId/repository",
+        element: <RepositoryPage />,
+      },
+
+      // ================= STUDENT =================
       {
         element: <RequireUser allowedRoles={["STUDENT"]} />,
         children: [
           {
+            path: "project",
+            element: <GroupProjectPage />,
+          },
+          {
             path: "tasks",
             element: <TaskBoardPage />,
           },
+
           // ----- SRS -----
           {
             path: "srs",
@@ -194,6 +208,7 @@ export const router = createBrowserRouter([
             path: "srs/:id",
             element: <SrsEditorPage />,
           },
+
           // ----- REPORT -----
           {
             path: "reports",
@@ -210,11 +225,10 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // ================= CÁC TRANG DÀNH RIÊNG CHO LECTURER =================
+      // ================= LECTURER =================
       {
         element: <RequireUser allowedRoles={["LECTURER"]} />,
         children: [
-          // ----- SRS REVIEW -----
           {
             path: "profile",
             element: <UserProfilePage />,
@@ -223,7 +237,6 @@ export const router = createBrowserRouter([
             path: "srs/review/:id",
             element: <SrsReviewPage />,
           },
-          // ----- REPORT REVIEW -----
           {
             path: "reports/review/:reportId",
             element: <ReportReviewPage />,

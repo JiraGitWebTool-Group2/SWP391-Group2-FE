@@ -113,7 +113,6 @@ export default function ClassManagementPage() {
         c.classCode.trim().toLowerCase() ===
           editingClass.classCode.trim().toLowerCase(),
     );
-
     if (duplicated) {
       toast.error("Update failed", {
         description: "Class code already exists in this semester",

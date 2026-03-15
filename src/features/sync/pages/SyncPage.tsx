@@ -8,6 +8,10 @@ import { toast } from "sonner";
 
 export default function SyncPage() {
   const [groups, setGroups] = useState<IntegratedGroup[]>([]);
+  const [filteredGroups, setFilteredGroups] = useState<IntegratedGroup[]>([]);
+
+  const [selectedClass, setSelectedClass] = useState<number | null>(null);
+
   const [selectedGroup, setSelectedGroup] = useState<IntegratedGroup | null>(
     null,
   );
@@ -27,6 +31,19 @@ export default function SyncPage() {
 
     fetchGroups();
   }, []);
+
+  const handleClassChange = (classId: number | null) => {
+    setSelectedClass(classId);
+    setSelectedGroup(null);
+
+    if (!classId) {
+      setFilteredGroups([]);
+      return;
+    }
+
+    const list = groups.filter((g) => g.classId === classId);
+    setFilteredGroups(list);
+  };
 
   const handleStartSync = async (
     payload: Omit<CreateSyncRunRequest, "projectId">,
@@ -48,33 +65,66 @@ export default function SyncPage() {
     }
   };
 
+  // Lấy danh sách class unique
+  const classes = Array.from(
+    new Map(groups.map((g) => [g.classId, g])).values(),
+  );
+
   return (
-    <div className="p-10 max-w-2xl mx-auto">
-      {/* Select Group */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Select Group</label>
+    <div className="p-10 max-w-2xl mx-auto space-y-6">
+      {/* SELECT CLASS */}
+      <div>
+        <label className="block mb-2 font-medium">Select Class</label>
 
         <select
           className="w-full border rounded-lg p-2"
-          onChange={(e) => {
-            const group = groups.find(
-              (g) => g.groupId === Number(e.target.value),
-            );
-            setSelectedGroup(group || null);
-          }}
+          onChange={(e) =>
+            handleClassChange(e.target.value ? Number(e.target.value) : null)
+          }
         >
-          <option value="">Choose group</option>
+          <option value="">Choose class</option>
 
-          {groups.map((g) => (
-            <option key={g.groupId} value={g.groupId}>
-              {g.groupName} - {g.projectName}
+          {classes.map((c) => (
+            <option key={c.classId} value={c.classId}>
+              {c.classCode}
             </option>
           ))}
         </select>
       </div>
 
-      {/* Sync Form */}
-      {selectedGroup && <SyncForm onSubmit={handleStartSync} />}
+      {/* SELECT GROUP */}
+      {selectedClass && (
+        <div>
+          <label className="block mb-2 font-medium">Select Group</label>
+
+          <select
+            className="w-full border rounded-lg p-2"
+            onChange={(e) => {
+              const group = filteredGroups.find(
+                (g) => g.groupId === Number(e.target.value),
+              );
+
+              setSelectedGroup(group || null);
+            }}
+          >
+            <option value="">Choose group</option>
+
+            {filteredGroups.map((g) => (
+              <option key={g.groupId} value={g.groupId}>
+                {g.groupName} - {g.projectName}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* SYNC FORM */}
+      {selectedGroup && (
+        <SyncForm
+          integrations={selectedGroup.integrations}
+          onSubmit={handleStartSync}
+        />
+      )}
     </div>
   );
 }

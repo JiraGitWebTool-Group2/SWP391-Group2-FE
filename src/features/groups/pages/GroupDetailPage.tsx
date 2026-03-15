@@ -9,6 +9,8 @@ import {
   removeStudentFromGroup,
   getStudentsOfClass,
   createProjectInGroup,
+  updateProject,
+  deleteProject,
 } from "../services";
 
 import type { Group, Project, GroupStudent, ClassStudent } from "../types";
@@ -20,6 +22,8 @@ import { Badge } from "@/components/ui/badge";
 
 import { useAuthStore } from "@/stores/auth.store";
 import { ArrowLeft } from "lucide-react";
+
+import { toast } from "sonner";
 
 export default function GroupDetailPage() {
   const { groupId } = useParams();
@@ -37,9 +41,11 @@ export default function GroupDetailPage() {
   const [selectedRoleId, setSelectedRoleId] = useState<number>(3);
 
   const [projectName, setProjectName] = useState("");
-  const [jiraKey, setJiraKey] = useState("");
-  const [githubOrg, setGithubOrg] = useState("");
+  const [projectCode, setprojectCode] = useState("");
   const [description, setDescription] = useState("");
+  const [requirement, setRequirement] = useState("");
+
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!groupId) return;
@@ -96,20 +102,32 @@ export default function GroupDetailPage() {
 
       await loadStudents();
 
+      toast.success("Student added to group successfully");
+
       setSelectedStudentId(null);
       setSelectedRoleId(3);
     } catch (err) {
       console.error(err);
       alert("Add student failed");
+
+      toast.error("Add student failed");
     }
   };
 
   const handleRemoveStudent = async (userId: number) => {
     if (!confirm("Remove this student from group?")) return;
 
-    await removeStudentFromGroup(Number(groupId), userId);
+    try {
+      await removeStudentFromGroup(Number(groupId), userId);
 
-    await loadStudents();
+      await loadStudents();
+
+      toast.success("Student removed from group successfully");
+    } catch (err) {
+      console.error(err);
+
+      toast.error("Remove student failed");
+    }
   };
 
   const handleCreateProject = async () => {
@@ -117,22 +135,77 @@ export default function GroupDetailPage() {
 
     try {
       await createProjectInGroup(Number(groupId), {
+        projectCode,
         projectName,
-        jiraKey,
-        githubOrg,
         description,
-        createdByUserId: user.userId,
+        requirement,
       });
 
       await loadProjects();
 
+      setprojectCode("");
       setProjectName("");
-      setJiraKey("");
-      setGithubOrg("");
       setDescription("");
+      setRequirement("");
+
+      toast.success("Project created successfully");
     } catch (err) {
       console.error(err);
       alert("Create project failed");
+
+      toast.error("Create project failed");
+    }
+  };
+
+  const handleEditProject = (p: Project) => {
+    setEditingProjectId(p.projectId);
+    setprojectCode(p.projectCode);
+    setProjectName(p.projectName);
+    setDescription(p.description ?? "");
+    setRequirement(p.requirement ?? "");
+  };
+
+  const handleUpdateProject = async () => {
+    if (!groupId || !editingProjectId) return;
+
+    try {
+      await updateProject(Number(groupId), editingProjectId, {
+        projectCode,
+        projectName,
+        description,
+        requirement,
+      });
+
+      setEditingProjectId(null);
+
+      setprojectCode("");
+      setProjectName("");
+      setDescription("");
+      setRequirement("");
+
+      await loadProjects(); // load lại sau khi reset
+
+      toast.success("Project updated successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Update project failed");
+    }
+  };
+
+  const handleDeleteProject = async (projectId: number) => {
+    if (!groupId) return;
+
+    if (!confirm("Delete this project?")) return;
+
+    try {
+      await deleteProject(Number(groupId), projectId);
+
+      await loadProjects();
+
+      toast.success("Project deleted successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Delete project failed");
     }
   };
 
@@ -142,7 +215,6 @@ export default function GroupDetailPage() {
 
   return (
     <div className="space-y-8">
-      {/* HEADER */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-4 h-4" />
@@ -151,7 +223,6 @@ export default function GroupDetailPage() {
         <h1 className="text-2xl font-bold">{group?.groupName}</h1>
       </div>
 
-      {/* STUDENTS */}
       <Card>
         <CardHeader>
           <CardTitle>Students</CardTitle>
@@ -195,6 +266,7 @@ export default function GroupDetailPage() {
                     <Button
                       size="sm"
                       variant="destructive"
+                      className="text-black"
                       onClick={() => handleRemoveStudent(s.userId)}
                     >
                       Remove
@@ -205,7 +277,6 @@ export default function GroupDetailPage() {
             </tbody>
           </table>
 
-          {/* ADD STUDENT */}
           <div className="flex gap-2 mt-4">
             <select
               value={selectedStudentId ?? ""}
@@ -241,7 +312,6 @@ export default function GroupDetailPage() {
         </CardContent>
       </Card>
 
-      {/* PROJECTS */}
       <Card>
         <CardHeader>
           <CardTitle>Projects</CardTitle>
@@ -256,12 +326,34 @@ export default function GroupDetailPage() {
                 <Card key={p.projectId}>
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
+                      <p className="font-medium">{p.projectCode}</p>
                       <p className="font-medium">{p.projectName}</p>
 
                       <div className="flex gap-4 text-sm text-muted-foreground">
-                        <span>Jira: {p.jiraProjectKey}</span>
-                        <span>Github: {p.githubOrg}</span>
+                        <p>
+                          Description: {p.description} <br />
+                          Requirement: {p.requirement}
+                        </p>
                       </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEditProject(p)}
+                      >
+                        Edit
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="text-black"
+                        onClick={() => handleDeleteProject(p.projectId)}
+                      >
+                        Delete
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -271,13 +363,19 @@ export default function GroupDetailPage() {
         </CardContent>
       </Card>
 
-      {/* CREATE PROJECT */}
       <Card>
         <CardHeader>
-          <CardTitle>Create Project</CardTitle>
+          <CardTitle>
+            {editingProjectId ? "Update Project" : "Create Project"}
+          </CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-3">
+          <Input
+            placeholder="Project Code"
+            value={projectCode}
+            onChange={(e) => setprojectCode(e.target.value)}
+          />
           <Input
             placeholder="Project Name"
             value={projectName}
@@ -285,24 +383,21 @@ export default function GroupDetailPage() {
           />
 
           <Input
-            placeholder="Jira Key"
-            value={jiraKey}
-            onChange={(e) => setJiraKey(e.target.value)}
-          />
-
-          <Input
-            placeholder="Github Org"
-            value={githubOrg}
-            onChange={(e) => setGithubOrg(e.target.value)}
-          />
-
-          <Input
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          <Input
+            placeholder="Requirement"
+            value={requirement}
+            onChange={(e) => setRequirement(e.target.value)}
+          />
 
-          <Button onClick={handleCreateProject}>Create Project</Button>
+          {editingProjectId ? (
+            <Button onClick={handleUpdateProject}>Update Project</Button>
+          ) : (
+            <Button onClick={handleCreateProject}>Create Project</Button>
+          )}
         </CardContent>
       </Card>
     </div>

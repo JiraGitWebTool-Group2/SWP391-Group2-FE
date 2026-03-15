@@ -1,37 +1,17 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import { api } from "@/lib/axios";
-
 import {
   getClassById,
-  getLecturersOfClass,
-  getLecturers,
+  getGroupsByClass,
   getStudentsOfClass,
-  removeStudentFromClass,
-  addStudentsBulk,
-
-  // ===== GROUP (ADMIN KHÔNG DÙNG) =====
-  // getGroupsByClass,
-  assignLecturer,
-  removeLecturer,
 } from "../services";
 
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-import type {
-  ClassDetail,
-
-  // ===== GROUP TYPE (ADMIN KHÔNG DÙNG) =====
-  // GroupOfClass,
-  Lecturer,
-  StudentOfClass,
-} from "../types";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
 import {
   Table,
   TableBody,
@@ -40,32 +20,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type {
+  ClassDetail,
+  GroupOfClass,
+  Lecturer,
+  StudentOfClass,
+} from "@/features/admin/types";
+import {
+  addStudentsBulk,
+  getLecturersOfClass,
+  removeStudentFromClass,
+} from "@/features/admin/services";
 
-// ===== GROUP SERVICE (ADMIN KHÔNG DÙNG) =====
-// import { createGroup } from "@/features/groups/services";
+/* ================= GROUP TYPE ================= */
 
-export default function AdminClassDetailPage() {
+export default function LecturerClassDetailPage() {
   const { classId } = useParams();
   const navigate = useNavigate();
 
   const [classDetail, setClassDetail] = useState<ClassDetail | null>(null);
 
   const [lecturers, setLecturers] = useState<Lecturer[]>([]);
-  const [allLecturers, setAllLecturers] = useState<Lecturer[]>([]);
-
   const [students, setStudents] = useState<StudentOfClass[]>([]);
-
-  // ===== GROUP STATE (ADMIN KHÔNG DÙNG) =====
-  // const [groups, setGroups] = useState<GroupOfClass[]>([]);
+  const [groups, setGroups] = useState<GroupOfClass[]>([]);
 
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   /* ================= LOAD CLASS ================= */
 
   const loadClass = async () => {
     try {
       if (!classId) return;
+
       const data = await getClassById(Number(classId));
       setClassDetail(data);
     } catch {
@@ -80,16 +66,13 @@ export default function AdminClassDetailPage() {
       if (!classId) return;
 
       const data = await getLecturersOfClass(Number(classId));
-      setLecturers(Array.isArray(data) ? data : data ? [data] : []);
-    } catch {
-      setError("Cannot load lecturers.");
-    }
-  };
 
-  const loadAllLecturers = async () => {
-    try {
-      const data = await getLecturers();
-      setAllLecturers(data);
+      if (!data) {
+        setLecturers([]);
+        return;
+      }
+
+      setLecturers(Array.isArray(data) ? data : [data]);
     } catch {
       setError("Cannot load lecturers.");
     }
@@ -103,7 +86,12 @@ export default function AdminClassDetailPage() {
 
       const data = await getStudentsOfClass(Number(classId));
 
-      const list = Array.isArray(data) ? data : data ? [data] : [];
+      if (!data) {
+        setStudents([]);
+        return;
+      }
+
+      const list = Array.isArray(data) ? data : [data];
 
       const uniqueStudents = Array.from(
         new Map(list.map((s) => [s.studentId, s])).values(),
@@ -117,30 +105,31 @@ export default function AdminClassDetailPage() {
 
   /* ================= LOAD GROUPS ================= */
 
-  // ===== ADMIN KHÔNG DÙNG GROUP =====
-  /*
   const loadGroups = async () => {
     try {
       if (!classId) return;
 
       const data = await getGroupsByClass(Number(classId));
-      setGroups(Array.isArray(data) ? data : data ? [data] : []);
+
+      if (!data) {
+        setGroups([]);
+        return;
+      }
+
+      setGroups(Array.isArray(data) ? data : [data]);
     } catch {
       setError("Cannot load groups.");
     }
   };
-  */
 
   /* ================= ADD STUDENT ================= */
 
   const handleAddStudent = async () => {
     try {
-      setError(null);
-      setSuccess(null);
-
       if (!classId) return;
 
       const input = prompt("Enter Student IDs (comma separated)");
+
       if (!input) return;
 
       const ids = input
@@ -148,25 +137,12 @@ export default function AdminClassDetailPage() {
         .map((id) => Number(id.trim()))
         .filter((id) => !isNaN(id));
 
-      // ===== CHECK TRÙNG =====
-      const existingIds = students.map((s) => s.studentId);
-
-      const duplicated = ids.find((id) => existingIds.includes(id));
-
-      if (duplicated) {
-        setError(`Student ID ${duplicated} already exists in this class.`);
-        return;
-      }
-
       await addStudentsBulk(Number(classId), {
         studentIds: ids,
       });
-
       await loadStudents();
-
-      setSuccess("Students added successfully!");
     } catch {
-      setError("Cannot add student.");
+      setError("Cannot add student");
     }
   };
 
@@ -176,161 +152,51 @@ export default function AdminClassDetailPage() {
     try {
       if (!classId) return;
 
-      const confirmDelete = confirm("Remove this student from class?");
-      if (!confirmDelete) return;
-
       await removeStudentFromClass(Number(classId), studentId);
 
       await loadStudents();
 
-      setSuccess("Student removed successfully!");
+      setError(null);
     } catch {
       setError("Cannot remove student.");
     }
   };
-
-  /* ================= ADD LECTURER ================= */
-
-  const handleAddLecturer = async () => {
-    try {
-      setError(null);
-      setSuccess(null);
-
-      if (!classId) return;
-
-      const input = prompt("Enter Lecturer ID");
-
-      if (!input) return;
-      const existingLecturers = lecturers.map((l) => l.lecturerId);
-
-      if (existingLecturers.includes(Number(input))) {
-        setError("This lecturer is already assigned to this class.");
-        return;
-      }
-
-      await assignLecturer(Number(classId), Number(input));
-
-      await loadLecturers();
-      setSuccess("Lecturer added successfully!");
-    } catch {
-      setError("Cannot add lecturer.");
-    }
-  };
-
-  /* ================= REMOVE LECTURER ================= */
-
-  const handleRemoveLecturer = async (lecturerId: number) => {
-    try {
-      setError(null);
-      setSuccess(null);
-
-      if (!classId) return;
-
-      const confirmDelete = confirm("Remove this lecturer from class?");
-      if (!confirmDelete) return;
-
-      await removeLecturer(Number(classId), lecturerId);
-
-      setLecturers((prev) => prev.filter((l) => l.lecturerId !== lecturerId));
-      setSuccess("Lecturer removed successfully!");
-    } catch {
-      setError("Cannot remove lecturer.");
-    }
-  };
-
-  /* ================= CREATE GROUP ================= */
-
-  // ===== ADMIN KHÔNG TẠO GROUP =====
-  /*
-  const handleCreateGroup = async () => {
-    try {
-      setError(null);
-      setSuccess(null);
-
-      if (!classId) return;
-
-      const name = prompt("Enter group name");
-      if (!name) return;
-
-      await createGroup({
-        groupName: name,
-        description: "",
-        classId: Number(classId),
-      });
-
-      await loadGroups();
-      setSuccess("Group created successfully!");
-    } catch {
-      setError("Cannot create group because already this group.");
-    }
-  };
-  */
-
-  /* ================= DELETE GROUP ================= */
-
-  // ===== ADMIN KHÔNG XÓA GROUP =====
-  /*
-  const handleDeleteGroup = async (groupId: number) => {
-    try {
-      setError(null);
-      setSuccess(null);
-
-      const confirmDelete = confirm("Delete this group?");
-      if (!confirmDelete) return;
-
-      await api.delete(`/groups/${groupId}`);
-
-      await loadGroups();
-      setSuccess("Group deleted successfully!");
-    } catch {
-      setError("Cannot delete group because already this group project.");
-    }
-  };
-  */
 
   /* ================= INIT ================= */
 
   useEffect(() => {
     loadClass();
     loadLecturers();
-    loadAllLecturers();
     loadStudents();
-
-    // ===== GROUP (ADMIN KHÔNG LOAD) =====
-    // loadGroups();
+    loadGroups();
   }, [classId]);
 
   /* ================= UI ================= */
 
   return (
     <div className="p-8 space-y-8 bg-muted/30 min-h-screen">
+      {/* HEADER */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-4 h-4" />
         </Button>
 
         <div>
-          <h1 className="text-3xl font-bold">Class Detail</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Class Detail</h1>
           <p className="text-muted-foreground text-sm">
-            Manage class information, lecturers and students
+            Manage class information, lecturers, groups and students
           </p>
         </div>
       </div>
 
+      {/* ERROR */}
       {error && (
         <div className="p-4 border border-red-200 bg-red-50 text-red-700 rounded-lg">
           {error}
         </div>
       )}
 
-      {success && (
-        <div className="p-4 border border-green-200 bg-green-50 text-green-700 rounded-lg">
-          {success}
-        </div>
-      )}
-
-      {/* CLASS INFO */}
-
+      {/* ================= CLASS INFO ================= */}
       {classDetail && (
         <Card>
           <CardHeader>
@@ -351,22 +217,21 @@ export default function AdminClassDetailPage() {
         </Card>
       )}
 
-      {/* LECTURERS */}
-
+      {/* ================= LECTURERS ================= */}
       <Card>
-        <CardHeader className="flex justify-between">
+        <CardHeader>
           <CardTitle>Lecturers</CardTitle>
-
-          <Button size="sm" onClick={handleAddLecturer}>
-            Add Lecturer
-          </Button>
         </CardHeader>
 
         <CardContent className="space-y-3">
-          {lecturers.map((l) => (
+          {lecturers.length === 0 && (
+            <p className="text-muted-foreground text-sm">No lecturers</p>
+          )}
+
+          {lecturers.map((l, index) => (
             <div
-              key={l.lecturerId}
-              className="flex justify-between items-center border rounded-lg p-4"
+              key={`${l.lecturerId}-${index}`}
+              className="flex justify-between items-center border rounded-lg p-4 hover:bg-muted/40 transition"
             >
               <div>
                 <p className="font-medium">{l.lecturerName}</p>
@@ -374,33 +239,111 @@ export default function AdminClassDetailPage() {
                   {l.lecturerEmail}
                 </p>
               </div>
-
-              <Button
-                size="sm"
-                variant="destructive"
-                className="text-black"
-                onClick={() => handleRemoveLecturer(l.lecturerId)}
-              >
-                Remove
-              </Button>
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {/* STUDENTS */}
-
+      {/* ================= GROUPS ================= */}
       <Card>
-        <CardHeader className="flex justify-between">
+        <CardHeader>
+          <CardTitle>Groups</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Group Name</TableHead>
+                  <TableHead>Project</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+
+              <TableBody>
+                {groups.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={3}
+                      className="text-center text-muted-foreground"
+                    >
+                      No groups
+                    </TableCell>
+                  </TableRow>
+                )}
+
+                {groups.map((g, index) => (
+                  <TableRow key={`${g.groupId}-${index}`}>
+                    <TableCell className="font-medium">{g.groupName}</TableCell>
+
+                    <TableCell className="align-middle">
+                      {g.projectName ? (
+                        <Badge variant="secondary">{g.projectName}</Badge>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="flex justify-center gap-2">
+                        {g.projectId ? (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-primary/10 hover:border-primary hover:text-primary transition bg-amber-500"
+                              onClick={() =>
+                                navigate(
+                                  `/admin/projects/${g.projectId}/integration`,
+                                )
+                              }
+                            >
+                              Integration
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="hover:bg-primary/10 hover:border-primary hover:text-primary transition bg-amber-500"
+                              onClick={() =>
+                                navigate(
+                                  `/admin/projects/${g.projectId}/repository`,
+                                )
+                              }
+                            >
+                              Repository
+                            </Button>
+                          </>
+                        ) : (
+                          "-"
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ================= STUDENTS ================= */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Students</CardTitle>
 
-          <Button size="sm" onClick={handleAddStudent}>
+          <Button
+            size="sm"
+            className="px-4 bg-blue-500 text-white hover:bg-primary/90 shadow-sm hover:shadow-md hover:scale-[1.03] transition-all duration-200"
+            onClick={handleAddStudent}
+          >
             Add Student
           </Button>
         </CardHeader>
 
         <CardContent>
-          <div className="border rounded-md">
+          <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -412,9 +355,22 @@ export default function AdminClassDetailPage() {
               </TableHeader>
 
               <TableBody>
-                {students.map((s) => (
-                  <TableRow key={s.studentId}>
-                    <TableCell>{s.studentName}</TableCell>
+                {students.length === 0 && (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="text-center text-muted-foreground"
+                    >
+                      No students
+                    </TableCell>
+                  </TableRow>
+                )}
+
+                {students.map((s, index) => (
+                  <TableRow key={`${s.studentId}-${index}`}>
+                    <TableCell className="font-medium">
+                      {s.studentName}
+                    </TableCell>
 
                     <TableCell>{s.studentEmail}</TableCell>
 
@@ -429,8 +385,7 @@ export default function AdminClassDetailPage() {
                     <TableCell className="text-right">
                       <Button
                         size="sm"
-                        variant="destructive"
-                        className="text-black"
+                        className="bg-red-500 text-white hover:bg-red-600 shadow-sm hover:shadow-md hover:scale-[1.03] transition-all duration-200"
                         onClick={() => handleRemoveStudent(s.studentId)}
                       >
                         Remove
